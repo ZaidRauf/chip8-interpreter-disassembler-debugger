@@ -27,6 +27,10 @@ class chip8{
         return 0x10
     }
 
+    static get FLAG_REGISTER() { 
+        return 0xF
+    }
+
     static randomByteGenerator(){
         return Math.floor(Math.random() * 256)
     }
@@ -69,55 +73,148 @@ class chip8{
         this.stack = []
         this.indexRegister = 0
         this.programCounter = 0
-        // this.stackPointer = -1 //Is there any need for a stack pointer?
+        // this.stackPointer = -1 //Is there any need for a stack pointer if im just using .length?
         this.delayTimer = 0
         this.soundTimer = 0
-        // this.currentlyExecutingOpCode = 0
+        this.currentOpcode = 0
 
         this.loadFonts();
+    }
+
+    set setCurrentOpcode(newOpcode){
+        this.currentOpcode = newOpcode;
     }
 
     //Instruction Functions
     SYS(){}
     CLS(){this.pixelBuffer.fill(false)} //00E0
     RET(){this.programCounter = this.stack[this.stack.length - 1]; this.stack.pop()} // 00EE
-    JP(opcode){this.programCounter = 0x0FFF & opcode} //1nnn
-    CALL(opcode){this.stack.push(this.programCounter); this.programCounter = 0x0FFF & opcode} //2nnn
-    SE(opcode){
-        var x = (0x0F00 & opcode) >>> 8
-        var kk = 0x00FF & opcode
+    JP(){this.programCounter = 0x0FFF & this.currentOpcode} //1nnn
+    CALL(){this.stack.push(this.programCounter); this.programCounter = 0x0FFF & this.currentOpcode} //2nnn
+    SE_rb(){
+        var x = (0x0F00 & this.currentOpcode) >>> 8
+        var kk = 0x00FF & this.currentOpcode
         
         if (this.registers[x] === kk){
             this.programCounter += 2
         }
     }
-    SNE(opcode){
-        var x = (0x0F00 & opcode) >>> 8
-        var kk = 0x00FF & opcode
+    SNE_rb(){
+        var x = (0x0F00 & this.currentOpcode) >>> 8
+        var kk = 0x00FF & this.currentOpcode
         
         if (this.registers[x] !== kk){
             this.programCounter += 2
         }
     }
+    SE_rr(){
+        var x = (0x0F00 & this.currentOpcode) >>> 8
+        var y = (0x00F0 & this.currentOpcode) >>> 4
+        
+        if (this.registers[x] === this.registers[y]){
+            this.programCounter += 2
+        }
+    }
+    LD_rb(){
+        var x = (0x0F00 & this.currentOpcode) >>> 8
+        var kk = 0x00FF & this.currentOpcode
+        this.registers[x] = kk;
+    }
+    ADD_rb(){
+        // Do i need to set the carry flag? Seems no
+        var x = (0x0F00 & this.currentOpcode) >>> 8
+        var kk = 0x00FF & this.currentOpcode
+        this.registers[x] = (this.registers[x] + kk) & 0x00FF;
+    }
+    LD_rr(){
+        var x = (0x0F00 & this.currentOpcode) >>> 8
+        var y = (0x00F0 & this.currentOpcode) >>> 4
+
+        this.registers[x] = this.registers[y]
+    }
+    OR_rr(){
+        var x = (0x0F00 & this.currentOpcode) >>> 8
+        var y = (0x00F0 & this.currentOpcode) >>> 4
+
+        this.registers[x] = this.registers[x] | this.registers[y]
+
+    }
+    AND_rr(){
+        var x = (0x0F00 & this.currentOpcode) >>> 8
+        var y = (0x00F0 & this.currentOpcode) >>> 4
+
+        this.registers[x] = this.registers[x] & this.registers[y]
+
+    }
+    XOR_rr(){
+        var x = (0x0F00 & this.currentOpcode) >>> 8
+        var y = (0x00F0 & this.currentOpcode) >>> 4
+
+        this.registers[x] = this.registers[x] ^ this.registers[y]
+    }
+    ADD_rr(){
+        var x = (0x0F00 & this.currentOpcode) >>> 8
+        var y = (0x00F0 & this.currentOpcode) >>> 4
+
+        this.registers[x] += this.registers[y]
+
+        if (this.registers[x] > 255) this.registers[chip8.FLAG_REGISTER] = 1
+        else this.registers[chip8.FLAG_REGISTER] = 0
+
+        this.registers[x] = this.registers[x] & 0xFF
+    }
+    SUB_rr(){
+        var x = (0x0F00 & this.currentOpcode) >>> 8
+        var y = (0x00F0 & this.currentOpcode) >>> 4
+
+        if (this.registers[x] > registers[y]) this.registers[chip8.FLAG_REGISTER] = 1
+        else this.registers[chip8.FLAG_REGISTER] = 0
+
+        this.registers[x] = this.registers[x] - this.registers[y]
+        this.registers[x] = this.registers[x] & 0xFF
+    }
+    SHR_r(){
+        var x = (0x0F00 & this.currentOpcode) >>> 8
+        var y = (0x00F0 & this.currentOpcode) >>> 4
+
+        if((this.registers[x] & 0b1) == 0b1) this.registers[chip8.FLAG_REGISTER] = 1
+        else this.registers[chip8.FLAG_REGISTER] = 0
+
+        this.registers[x] = this.registers[x] >>> 1
+    }
+    SUBN_rr(){
+        var x = (0x0F00 & this.currentOpcode) >>> 8
+        var y = (0x00F0 & this.currentOpcode) >>> 4
+
+        if (this.registers[y] > registers[x]) this.registers[chip8.FLAG_REGISTER] = 1
+        else this.registers[chip8.FLAG_REGISTER] = 0
+
+        this.registers[x] = this.registers[y] - this.registers[x]
+        this.registers[x] = this.registers[x] & 0xFF
+    }
+    SHL_r(){
+        var x = (0x0F00 & this.currentOpcode) >>> 8
+        var y = (0x00F0 & this.currentOpcode) >>> 4
+
+        if((this.registers[x] & 0x80) == 0x80) this.registers[chip8.FLAG_REGISTER] = 1
+        else this.registers[chip8.FLAG_REGISTER] = 0
+
+        this.registers[x] = this.registers[x] << 1
+    }
+    SNE_rr(){
+        var x = (0x0F00 & this.currentOpcode) >>> 8
+        var y = 0x00F0 & this.currentOpcode >>> 4
+        
+        if (this.registers[x] !== this.registers[y]){
+            this.programCounter += 2
+        }
+    }
+
 
 }
 
 var c8 = new chip8();
+c8.setCurrentOpcode = 0x1111 
+c8.ADD_rr()
 
 console.log(chip8.randomByteGenerator());
-
-// function init_buttons(){
-
-//     var hex = ['0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F']
-
-//     hex.forEach((item, index) => {
-//         var btn = document.getElementById("inputBtn_" + item);
-//         btn.addEventListener("click", () =>{
-//             console.log("btn" + item + " Pressed!")
-//         })
-    
-//     })
-    
-// }
-
-// init_buttons()
