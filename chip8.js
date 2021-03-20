@@ -31,6 +31,10 @@ class chip8{
         return 0xF
     }
 
+    static get NUM_KEYS() { 
+        return 0x10
+    }
+
     static randomByteGenerator(){
         return Math.floor(Math.random() * 256)
     }
@@ -78,15 +82,48 @@ class chip8{
         this.soundTimer = 0
         this.currentOpcode = 0
 
+        this.inputKeys = Array(chip8.NUM_KEYS).fill(false);
+
         this.loadFonts();
+
+        this.inputListener();
     }
 
     set setCurrentOpcode(newOpcode){
         this.currentOpcode = newOpcode;
     }
 
+    set pressKey(key){
+        this.currentKeyPress[key] = true;
+    }
+
+    set releaseKey(key){
+        this.currentKeyPress[key] = false;
+    }
+
+    inputListener(){
+        const keyArr = ['x', '1', '2', '3', 'q', 'w', 'e', 'a', 's', 'd', 'z', 'c', '4', 'r', 'f', 'v']
+        var keyMap = new Map();
+        
+
+        document.addEventListener('keydown', (event)=>{
+            const pressedKey = event.key
+
+            console.log("KeyDown: " + pressedKey)
+
+        }, false)
+
+        document.addEventListener('keyup', (event)=>{
+            const releasedKey = event.key
+
+            console.log("KeyUp: " + releasedKey)
+
+        }, false)
+        
+    }
+
     //Instruction Functions
-    SYS(){}
+    SYS(){ console.log("SYS call does nothing") }
     CLS(){this.pixelBuffer.fill(false)} //00E0
     RET(){this.programCounter = this.stack[this.stack.length - 1]; this.stack.pop()} // 00EE
     JP(){this.programCounter = 0x0FFF & this.currentOpcode} //1nnn
@@ -209,8 +246,76 @@ class chip8{
             this.programCounter += 2
         }
     }
+    LD_ia(){
+        var addr = 0x0FFF & this.currentOpcode
+        this.indexRegister = addr;
+    }
+    JP_ra(){
+        this.programCounter = (0x0FFF & this.currentOpcode) + this.registers[0]
+    } //1nnn
+    RND_rb(){
+        this.registers[0] = c8.randomByteGenerator & (0x00FF & this.currentOpcode)
+    }
+    DRW_rr(){
+        console.log("Draw not implemented yet")
+    }
+    SKP_r(){
+        var x = (0x0F00 & this.currentOpcode) >>> 8
 
+        if(this.inputKeys[x] == true){
+            pc += 2
+        }
 
+    }
+    SKNP_r(){
+        var x = (0x0F00 & this.currentOpcode) >>> 8
+
+        if(this.inputKeys[x] == false){
+            pc += 2
+        }
+    }
+    LD_rd(){
+        var x = (0x0F00 & this.currentOpcode) >>> 8
+        this.registers[x] = this.delayTimer
+    } // Fx07 - LD Vx, DT
+    LD_rk(){
+        console.log("Load key press into register not implemented yet")
+    }
+    LD_dr(){
+        var x = (0x0F00 & this.currentOpcode) >>> 8
+        this.delayTimer = this.registers[x]
+
+        while(this.delayTimer != 0){
+            // Do Delay at specified time rate
+            this.delayTimer--
+        }
+    } // Fx15 - LD DT, Vx
+    LD_sr(){
+        var x = (0x0F00 & this.currentOpcode) >>> 8
+        this.soundTimer = this.registers[x]
+
+        while(this.soundTimer != 0){
+            // Play Sound at 60 times per second
+            this.soundTimer--
+        }
+    }
+    ADD_ir(){
+        var x = (0x0F00 & this.currentOpcode) >>> 8
+        this.indexRegister = (this.indexRegister+ this.registers[x]) & 0xFF
+    }
+    LD_fr(){
+        var x = (0x0F00 & this.currentOpcode) >>> 8
+        this.indexRegister = c8.FONT_START_OFFSET + (x * 0x5)
+    }
+    LD_br(){
+        console.log("Load BCD into Vx")       
+    }
+    LD_ar(){
+        this.registers.forEach((element, index) => element = this.memory[this.indexRegister + index])
+    }
+    LD_ra(){
+        this.registers.forEach((element, index) => this.memory[this.indexRegister + index] = element)
+    }
 }
 
 var c8 = new chip8();
