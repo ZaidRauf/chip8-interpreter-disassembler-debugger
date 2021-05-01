@@ -52,18 +52,18 @@ init_buttons()
 canvas_init(1024)
 // pixelBuffer = Array(chip8.PIXEL_BUFFER_WIDTH).fill(Array(chip8.PIXEL_BUFFER_HEIGHT).fill(0))
 
-var pixelBuffer = new Array(chip8.PIXEL_BUFFER_HEIGHT)
+// var pixelBuffer = new Array(chip8.PIXEL_BUFFER_HEIGHT)
 
-for(var y = 0; y < chip8.PIXEL_BUFFER_WIDTH; y++){
-    pixelBuffer[y] = new Array(chip8.PIXEL_BUFFER_WIDTH).fill(0)
-}
+// for(var y = 0; y < chip8.PIXEL_BUFFER_WIDTH; y++){
+//     pixelBuffer[y] = new Array(chip8.PIXEL_BUFFER_WIDTH).fill(0)
+// }
 
-pixelBuffer[0][0] = 1
-pixelBuffer[63][0] = 1
-pixelBuffer[63][31] = 1
-pixelBuffer[0][31] = 1
+// pixelBuffer[0][0] = 1
+// pixelBuffer[63][0] = 1
+// pixelBuffer[63][31] = 1
+// pixelBuffer[0][31] = 1
 
-console.log(pixelBuffer)
-console.log(pixelBuffer[0][0])
+// console.log(pixelBuffer)
+// console.log(pixelBuffer[0][0])
 
-render_pixel_buffer(pixelBuffer)
+// render_pixel_buffer(pixelBuffer)

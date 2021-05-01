@@ -114,14 +114,14 @@ class chip8{
         document.addEventListener('keydown', (event)=>{
             const pressedKey = event.key
 
-            console.log("KeyDown: " + pressedKey)
+            // console.log("KeyDown: " + pressedKey)
 
         }, false)
 
         document.addEventListener('keyup', (event)=>{
             const releasedKey = event.key
 
-            console.log("KeyUp: " + releasedKey)
+            // console.log("KeyUp: " + releasedKey)
 
         }, false)
         
@@ -262,7 +262,36 @@ class chip8{
         this.registers[0] = c8.randomByteGenerator & (0x00FF & this.currentOpcode)
     }
     DRW_rr(){
-        console.log("Draw not implemented yet")
+        var num_bytes = 0x000F & this.currentOpcode
+        var x_draw_register = (0x0F00 & this.currentOpcode) >>> 8
+        var y_draw_register = (0x00F0 & this.currentOpcode) >>> 4
+        this.registers[0xF] = 0
+
+        var x_draw_pixel = this.registers[x_draw_register] % chip8.PIXEL_BUFFER_WIDTH
+        var y_draw_pixel = this.registers[y_draw_register] % chip8.PIXEL_BUFFER_HEIGHT
+
+        var y_pixel_offset = 0
+        for(var i = 0; i < num_bytes; i++){
+            var display_value = this.memory[this.indexRegister + i]
+            var x_pixel_offset = 0
+
+            var y_pixel_pos = (y_draw_pixel + y_pixel_offset) % chip8.PIXEL_BUFFER_HEIGHT
+            var bit_mask = 0x80
+            
+            for(var k = 7; k >= 0; k--){
+                var display_bit = (bit_mask & display_value) >>> k
+                
+                var x_pixel_pos = (x_draw_pixel + x_pixel_offset) % chip8.PIXEL_BUFFER_WIDTH
+
+                this.pixelBuffer[x_pixel_pos][y_pixel_pos] ^= display_bit
+
+                x_pixel_offset++
+                bit_mask >>>= 1
+            }
+
+            y_pixel_offset++
+        }
+
     }
     SKP_r(){
         var x = (0x0F00 & this.currentOpcode) >>> 8
@@ -324,7 +353,19 @@ class chip8{
 }
 
 var c8 = new chip8();
-c8.setCurrentOpcode = 0x1111 
-c8.ADD_rr()
 
-console.log(chip8.randomByteGenerator());
+c8.setCurrentOpcode = 0x6000
+c8.LD_rb()
+
+c8.setCurrentOpcode = 0x6100
+c8.LD_rb()
+
+c8.setCurrentOpcode = 0xA010
+c8.LD_ia()
+
+c8.setCurrentOpcode = 0xD015
+c8.DRW_rr()
+
+render_pixel_buffer(c8.pixelBuffer)
+
+console.log(c8.pixelBuffer)
