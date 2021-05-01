@@ -1,5 +1,6 @@
 #screen {
-    width:64;
-    height:32;
+    width:1024px;
+    height:512px;
     background-color: black;
+    border: 1px solid black;
 }

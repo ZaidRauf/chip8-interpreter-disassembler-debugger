@@ -66,13 +66,18 @@ class chip8{
 
     constructor() {
         // Instantiates and initializes registers V0, V1, V2, ... VF
-        this.registers = Array(chip8.NUM_REGISTERS).fill(0)
-        
-        // Instantiates and initializes memory
-        this.memory = Array(chip8.MEMORY_SIZE).fill(0)
+        this.registers = new Array(chip8.NUM_REGISTERS).fill(0)
 
-        // Pixel Buffer screen
-        this.pixelBuffer = Array(chip8.PIXEL_BUFFER_WIDTH * chip8.PIXEL_BUFFER_HEIGHT).fill(false)
+        // Instantiates and initializes memory
+        this.memory = new Array(chip8.MEMORY_SIZE).fill(0)
+
+        // Pixel Buffer Init
+        this.pixelBuffer = new Array(chip8.PIXEL_BUFFER_HEIGHT)
+
+        for(var x = 0; x < chip8.PIXEL_BUFFER_WIDTH; x++){
+            this.pixelBuffer[x] = new Array(chip8.PIXEL_BUFFER_WIDTH).fill(0)
+        }
+            
 
         this.stack = []
         this.indexRegister = 0
