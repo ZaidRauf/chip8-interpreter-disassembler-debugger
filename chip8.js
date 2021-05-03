@@ -1,7 +1,5 @@
 "use strict"
 
-var runner = false;
-
 class chip8{
 
     static get NUM_REGISTERS() { 
@@ -105,34 +103,48 @@ class chip8{
     }
 
     set pressKey(key){
-        this.currentKeyPress[key] = true;
+        this.inputKeys[key] = true;
     }
 
     set releaseKey(key){
-        this.currentKeyPress[key] = false;
+        this.inputKeys[key] = false;
     }
 
     inputListener(){
         const keyArr = ['x', '1', '2', '3', 'q', 'w', 'e', 'a', 's', 'd', 'z', 'c', '4', 'r', 'f', 'v']
         var keyMap = new Map();
         
+        keyArr.forEach((value, index) => {
+            keyMap.set(value, index)
+        })
 
         document.addEventListener('keydown', (event)=>{
             const pressedKey = event.key
 
-            runner = true
+            let keyValue = keyMap.get(pressedKey)
 
-            // while(true){
-            this.fetchProgramCounterInstruction();
-            this.decodeAndExecuteInstruction();
-            render_pixel_buffer(this.pixelBuffer)
-            // }
+            if(keyValue !== undefined){
+                this.pressKey = keyValue
+                console.log(this.inputKeys)
+            }
+
+            else if(pressedKey === 'm'){
+                this.runProgramCycle()
+                render_pixel_buffer(this.pixelBuffer)    
+            }
+
             // console.log("KeyDown: " + pressedKey)
 
         }, false)
 
         document.addEventListener('keyup', (event)=>{
             const releasedKey = event.key
+
+            let keyValue = keyMap.get(releasedKey)
+
+            if(keyValue !== undefined){
+                this.releaseKey = keyValue
+            }
 
             // console.log("KeyUp: " + releasedKey)
 
@@ -142,7 +154,19 @@ class chip8{
 
     //Instruction Functions
     SYS(){ console.log("SYS call does nothing") }
-    CLS(){this.pixelBuffer.fill(false)} //00E0
+    CLS(){
+        // this.pixelBuffer.fill(false)
+
+        for(var x = 0; x < chip8.PIXEL_BUFFER_WIDTH; x++){
+
+            for(var y = 0; y < chip8.PIXEL_BUFFER_HEIGHT; y++){
+
+                this.pixelBuffer[x][y] = 0
+
+            }
+            
+        }
+    } //00E0
     RET(){this.programCounter = this.stack[this.stack.length - 1]; this.stack.pop(); this.stackPointer--} // 00EE
     JP(){this.programCounter = 0x0FFF & this.currentOpcode} //1nnn
     CALL(){this.stack.push(this.programCounter); this.programCounter = 0x0FFF & this.currentOpcode; this.stackPointer++} //2nnn
@@ -232,16 +256,22 @@ class chip8{
         var x = (0x0F00 & this.currentOpcode) >>> 8
         var y = (0x00F0 & this.currentOpcode) >>> 4
 
-        if((this.registers[x] & 0b1) == 0b1) this.registers[chip8.FLAG_REGISTER] = 1
+        console.log(this.registers[x])
+        
+        if((this.registers[x] & 0x1) === 0x1) this.registers[chip8.FLAG_REGISTER] = 1
         else this.registers[chip8.FLAG_REGISTER] = 0
 
+        console.log((this.registers[x] & 0x1) === 0x1)
+
         this.registers[x] = this.registers[x] >>> 1
+        console.log(this.registers[x])
+
     }
     SUBN_rr(){
         var x = (0x0F00 & this.currentOpcode) >>> 8
         var y = (0x00F0 & this.currentOpcode) >>> 4
 
-        if (this.registers[y] > registers[x]) this.registers[chip8.FLAG_REGISTER] = 1
+        if (this.registers[y] > this.registers[x]) this.registers[chip8.FLAG_REGISTER] = 1
         else this.registers[chip8.FLAG_REGISTER] = 0
 
         this.registers[x] = this.registers[y] - this.registers[x]
@@ -251,7 +281,7 @@ class chip8{
         var x = (0x0F00 & this.currentOpcode) >>> 8
         var y = (0x00F0 & this.currentOpcode) >>> 4
 
-        if((this.registers[x] & 0x80) == 0x80) this.registers[chip8.FLAG_REGISTER] = 1
+        if((this.registers[x] & 0x80) === 0x80) this.registers[chip8.FLAG_REGISTER] = 1
         else this.registers[chip8.FLAG_REGISTER] = 0
 
         this.registers[x] = this.registers[x] << 1
@@ -303,6 +333,7 @@ class chip8{
 
                 // console.log(x_pixel_pos)
                 // console.log(y_pixel_pos)
+                // console.log(this.pixelBuffer[x_pixel_pos][y_pixel_pos])
                 this.pixelBuffer[x_pixel_pos][y_pixel_pos] ^= display_bit
 
                 x_pixel_offset++
@@ -315,16 +346,18 @@ class chip8{
     }
     SKP_r(){
         var x = (0x0F00 & this.currentOpcode) >>> 8
+        var x_key_value = this.registers[x]
 
-        if(this.inputKeys[x] == true){
+        if(this.inputKeys[x_key_value]){
             pc += 2
         }
 
     }
     SKNP_r(){
         var x = (0x0F00 & this.currentOpcode) >>> 8
+        var x_key_value = this.registers[x]
 
-        if(this.inputKeys[x] == false){
+        if(!this.inputKeys[x_key_value]){
             pc += 2
         }
     }
@@ -359,7 +392,7 @@ class chip8{
     }
     LD_fr(){
         var x = (0x0F00 & this.currentOpcode) >>> 8
-        this.indexRegister = c8.FONT_START_OFFSET + (x * 0x5)
+        this.indexRegister = c8.FONT_START_OFFSET + (this.registers[x] * 0x5)
     }
     LD_br(){
         var x = (0x0F00 & this.currentOpcode) >>> 8
@@ -367,7 +400,10 @@ class chip8{
 
         var least_significant_digit = bcd_val % 10
         var mid_significant_digit = ((bcd_val % 100) - least_significant_digit) / 10
-        var most_significant_digit = ((bcd_val) - mid_significant_digit - least_significant_digit) / 100
+        var most_significant_digit = ((bcd_val) - ((bcd_val % 100) - least_significant_digit) - least_significant_digit) / 100
+
+        // console.log(bcd_val)
+        // console.log(most_significant_digit, mid_significant_digit, least_significant_digit)
 
         this.memory[this.indexRegister] = most_significant_digit
         this.memory[this.indexRegister + 1] = mid_significant_digit
@@ -375,10 +411,28 @@ class chip8{
 
     }
     LD_ar(){
-        this.registers.forEach((element, index) => element = this.memory[this.indexRegister + index])
+        var x = (0x0F00 & this.currentOpcode) >>> 8
+
+        // this.registers.forEach((element, index) => element = this.memory[this.indexRegister + index])
+
+        for(let k = 0; k <= x; k++){
+            this.memory[this.indexRegister + k] = this.registers[k]
+        }
     }
     LD_ra(){
-        this.registers.forEach((element, index) => this.memory[this.indexRegister + index] = element)
+        var x = (0x0F00 & this.currentOpcode) >>> 8
+
+        // this.registers.forEach((element, index) => this.memory[this.indexRegister + index] = element)
+
+        for(let k = 0; k <= x; k++){
+            this.registers[k] = this.memory[this.indexRegister + k]
+        }
+    }
+
+    runProgramCycle(){
+        this.fetchProgramCounterInstruction()
+        this.programCounter += 2
+        this.decodeAndExecuteInstruction()
     }
 
     loadProgram(programBuffer){
@@ -399,7 +453,7 @@ class chip8{
         let lowerHalf = this.memory[this.programCounter + 1]
         let opcode = upperHalf + lowerHalf
 
-        this.programCounter += 2
+        // this.programCounter += 2
         this.currentOpcode = opcode
         // console.log(this.programCounter)
 
