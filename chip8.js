@@ -1,5 +1,8 @@
 "use strict"
 
+var interval = null;
+var midCycle = true;
+
 class chip8{
 
     static get NUM_REGISTERS() { 
@@ -93,6 +96,13 @@ class chip8{
 
         this.inputKeys = Array(chip8.NUM_KEYS).fill(false);
 
+        this.keyArr = ['x', '1', '2', '3', 'q', 'w', 'e', 'a', 's', 'd', 'z', 'c', '4', 'r', 'f', 'v']
+        this.keyMap = new Map();
+        
+        this.keyArr.forEach((value, index) => {
+            this.keyMap.set(value, index)
+        })
+
         this.loadFonts();
 
         this.inputListener();
@@ -111,17 +121,11 @@ class chip8{
     }
 
     inputListener(){
-        const keyArr = ['x', '1', '2', '3', 'q', 'w', 'e', 'a', 's', 'd', 'z', 'c', '4', 'r', 'f', 'v']
-        var keyMap = new Map();
-        
-        keyArr.forEach((value, index) => {
-            keyMap.set(value, index)
-        })
 
         document.addEventListener('keydown', (event)=>{
             const pressedKey = event.key
 
-            let keyValue = keyMap.get(pressedKey)
+            let keyValue = this.keyMap.get(pressedKey)
 
             if(keyValue !== undefined){
                 this.pressKey = keyValue
@@ -133,6 +137,25 @@ class chip8{
                 render_pixel_buffer(this.pixelBuffer)    
             }
 
+            else if(pressedKey === 'n'){
+                interval = setInterval(() => {
+                    if(midCycle){
+                        midCycle = false
+                        this.runProgramCycle()
+                        render_pixel_buffer(this.pixelBuffer)
+                        midCycle = true
+                    }
+                }, 2);
+                
+            }
+
+            else if(pressedKey === 'b'){
+                if(interval !== null){
+                    clearInterval(interval)
+                    interval = null   
+                }      
+            }
+
             // console.log("KeyDown: " + pressedKey)
 
         }, false)
@@ -140,7 +163,7 @@ class chip8{
         document.addEventListener('keyup', (event)=>{
             const releasedKey = event.key
 
-            let keyValue = keyMap.get(releasedKey)
+            let keyValue = this.keyMap.get(releasedKey)
 
             if(keyValue !== undefined){
                 this.releaseKey = keyValue
@@ -155,7 +178,6 @@ class chip8{
     //Instruction Functions
     SYS(){ console.log("SYS call does nothing") }
     CLS(){
-        // this.pixelBuffer.fill(false)
 
         for(var x = 0; x < chip8.PIXEL_BUFFER_WIDTH; x++){
 
@@ -331,9 +353,6 @@ class chip8{
                     this.registers[chip8.FLAG_REGISTER] = 1
                 }
 
-                // console.log(x_pixel_pos)
-                // console.log(y_pixel_pos)
-                // console.log(this.pixelBuffer[x_pixel_pos][y_pixel_pos])
                 this.pixelBuffer[x_pixel_pos][y_pixel_pos] ^= display_bit
 
                 x_pixel_offset++
@@ -365,8 +384,28 @@ class chip8{
         var x = (0x0F00 & this.currentOpcode) >>> 8
         this.registers[x] = this.delayTimer
     } // Fx07 - LD Vx, DT
-    LD_rk(){
-        console.log("Load key press into register not implemented yet")
+    async LD_rk(){
+        console.log("Load key press entered")
+        var x = (0x0F00 & this.currentOpcode) >>> 8
+        await this.blockingKeyPress(x, this)
+        console.log("Load key press exited")
+    }
+    blockingKeyPress(x, c8){
+        return new Promise ((resolve) => {
+            
+            document.addEventListener('keydown', onKeyHandler);
+            function onKeyHandler(e) {
+                var keyValue = c8.keyMap.get(e.key)
+                console.log(keyValue)
+
+                if (keyValue !== undefined) {
+                    document.removeEventListener('keydown', onKeyHandler);
+                    c8.registers[x] = keyValue
+                    resolve();
+                }
+            }
+        
+        })
     }
     LD_dr(){
         var x = (0x0F00 & this.currentOpcode) >>> 8
@@ -402,9 +441,6 @@ class chip8{
         var mid_significant_digit = ((bcd_val % 100) - least_significant_digit) / 10
         var most_significant_digit = ((bcd_val) - ((bcd_val % 100) - least_significant_digit) - least_significant_digit) / 100
 
-        // console.log(bcd_val)
-        // console.log(most_significant_digit, mid_significant_digit, least_significant_digit)
-
         this.memory[this.indexRegister] = most_significant_digit
         this.memory[this.indexRegister + 1] = mid_significant_digit
         this.memory[this.indexRegister + 2] = least_significant_digit
@@ -413,16 +449,12 @@ class chip8{
     LD_ar(){
         var x = (0x0F00 & this.currentOpcode) >>> 8
 
-        // this.registers.forEach((element, index) => element = this.memory[this.indexRegister + index])
-
         for(let k = 0; k <= x; k++){
             this.memory[this.indexRegister + k] = this.registers[k]
         }
     }
     LD_ra(){
         var x = (0x0F00 & this.currentOpcode) >>> 8
-
-        // this.registers.forEach((element, index) => this.memory[this.indexRegister + index] = element)
 
         for(let k = 0; k <= x; k++){
             this.registers[k] = this.memory[this.indexRegister + k]
@@ -441,6 +473,7 @@ class chip8{
         programBuffer.forEach((value,index) => {
             this.memory[chip8.PROGRAM_START + index] = value
         })
+
     }
 
     resetMemory(){
@@ -453,9 +486,7 @@ class chip8{
         let lowerHalf = this.memory[this.programCounter + 1]
         let opcode = upperHalf + lowerHalf
 
-        // this.programCounter += 2
         this.currentOpcode = opcode
-        // console.log(this.programCounter)
 
         return opcode;
     }
@@ -571,54 +602,3 @@ class chip8{
     }
 
 }
-
-function read_chip8_file_init(c8){
-    const inputElement = document.getElementById("input");
-    inputElement.addEventListener("change", function () {
-
-        const fileList = this.files; /* now you can work with the file list */
-        
-          var fileReader = new FileReader()
-        
-          fileReader.readAsArrayBuffer(fileList[0])
-        
-          fileReader.onload = function() {
-            // console.log(fileReader.result);
-        
-            let typedArray = new Uint8Array(fileReader.result)
-            // console.log(typedArray)
-
-            // let printArray = []
-            // typedArray.forEach((value, index) => printArray.push('0x' + value.toString(16)))
-            // console.log(printArray)
-
-            c8.resetMemory()
-            c8.loadProgram(typedArray)
-            typedArray.forEach((value, index) => c8.memory[chip8.PROGRAM_START + index] = value)
-
-            // console.log(c8.memory)
-          };
-    
-
-    }, false)
-
-}
-
-var c8 = new chip8();
-read_chip8_file_init(c8)
-
-// c8.setCurrentOpcode = 0x6000
-// c8.LD_rb()
-
-// c8.setCurrentOpcode = 0x6100
-// c8.LD_rb()
-
-// c8.setCurrentOpcode = 0xA010
-// c8.LD_ia()
-
-// c8.setCurrentOpcode = 0xD015
-// c8.DRW_rr()
-
-// render_pixel_buffer(c8.pixelBuffer)
-
-// console.log(c8.pixelBuffer)

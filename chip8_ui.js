@@ -49,38 +49,26 @@ function render_pixel_buffer(pixel_buffer){
 
 }
 
-// var loadedFile = null;
-// function read_chip8_file_init(){
-//     const inputElement = document.getElementById("input");
-//     inputElement.addEventListener("change", function () {
+function read_chip8_file_init(c8){
+    const inputElement = document.getElementById("input");
+    inputElement.addEventListener("change", function () {
 
-//         const fileList = this.files; /* now you can work with the file list */
+        const fileList = this.files; /* now you can work with the file list */
         
-//           var fileReader = new FileReader()
+          var fileReader = new FileReader()
         
-//           fileReader.readAsArrayBuffer(fileList[0])
+          fileReader.readAsArrayBuffer(fileList[0])
         
-//           fileReader.onload = function() {
-//             console.log(fileReader.result);
-        
-//             let typedArray = new Uint8Array(fileReader.result)
-//             console.log(typedArray)
+          fileReader.onload = function() {        
+            let typedArray = new Uint8Array(fileReader.result)
 
-//             let printArray = []
-            
-//             typedArray.forEach((value, index) => printArray.push('0x' + value.toString(16)))
-            
-//             console.log(printArray)
+            c8.resetMemory()
+            c8.loadProgram(typedArray)
+            typedArray.forEach((value, index) => c8.memory[chip8.PROGRAM_START + index] = value)
 
-//             loadedFile = fileReader.result
-//           };
+          };
     
 
-//     }, false)
+    }, false)
 
-// }
-
-
-init_buttons()
-canvas_init(1024)
-// read_chip8_file_init()
+}
