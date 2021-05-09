@@ -2,20 +2,6 @@
 
 var PIXEL_SIZE = 0
 
-function init_buttons(){
-
-    var hex = ['0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F']
-
-    hex.forEach((item, index) => {
-        var btn = document.getElementById("inputBtn_" + item);
-        btn.addEventListener("click", () =>{
-            console.log("btn" + item + " Pressed!")
-        })
-    
-    })
-    
-}
-
 // Width is power of 2
 function canvas_init(width){
     const canvas = document.getElementById('screen')
@@ -64,8 +50,6 @@ function read_chip8_file_init(c8){
 
             c8.resetMemory()
             c8.loadProgram(typedArray)
-            typedArray.forEach((value, index) => c8.memory[chip8.PROGRAM_START + index] = value)
-
           };
     
 

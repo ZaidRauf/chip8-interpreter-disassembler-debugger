@@ -1,8 +1,5 @@
 "use strict"
 
-var interval = null;
-var midCycle = true;
-
 class chip8{
 
     static get NUM_REGISTERS() { 
@@ -106,6 +103,10 @@ class chip8{
         this.loadFonts();
 
         this.inputListener();
+
+        this.interval = null;
+        this.midCycle = true;
+
     }
 
     set setCurrentOpcode(newOpcode){
@@ -129,34 +130,12 @@ class chip8{
 
             if(keyValue !== undefined){
                 this.pressKey = keyValue
-                console.log(this.inputKeys)
             }
 
             else if(pressedKey === 'm'){
                 this.runProgramCycle()
                 render_pixel_buffer(this.pixelBuffer)    
             }
-
-            else if(pressedKey === 'n'){
-                interval = setInterval(() => {
-                    if(midCycle){
-                        midCycle = false
-                        this.runProgramCycle()
-                        render_pixel_buffer(this.pixelBuffer)
-                        midCycle = true
-                    }
-                }, 2);
-                
-            }
-
-            else if(pressedKey === 'b'){
-                if(interval !== null){
-                    clearInterval(interval)
-                    interval = null   
-                }      
-            }
-
-            // console.log("KeyDown: " + pressedKey)
 
         }, false)
 
@@ -168,8 +147,6 @@ class chip8{
             if(keyValue !== undefined){
                 this.releaseKey = keyValue
             }
-
-            // console.log("KeyUp: " + releasedKey)
 
         }, false)
         
@@ -277,17 +254,11 @@ class chip8{
     SHR_r(){
         var x = (0x0F00 & this.currentOpcode) >>> 8
         var y = (0x00F0 & this.currentOpcode) >>> 4
-
-        console.log(this.registers[x])
         
         if((this.registers[x] & 0x1) === 0x1) this.registers[chip8.FLAG_REGISTER] = 1
         else this.registers[chip8.FLAG_REGISTER] = 0
 
-        console.log((this.registers[x] & 0x1) === 0x1)
-
         this.registers[x] = this.registers[x] >>> 1
-        console.log(this.registers[x])
-
     }
     SUBN_rr(){
         var x = (0x0F00 & this.currentOpcode) >>> 8
@@ -368,7 +339,7 @@ class chip8{
         var x_key_value = this.registers[x]
 
         if(this.inputKeys[x_key_value]){
-            pc += 2
+            this.programCounter += 2
         }
 
     }
@@ -377,7 +348,7 @@ class chip8{
         var x_key_value = this.registers[x]
 
         if(!this.inputKeys[x_key_value]){
-            pc += 2
+            this.programCounter += 2
         }
     }
     LD_rd(){
@@ -390,6 +361,7 @@ class chip8{
         await this.blockingKeyPress(x, this)
         console.log("Load key press exited")
     }
+
     blockingKeyPress(x, c8){
         return new Promise ((resolve) => {
             
@@ -407,22 +379,24 @@ class chip8{
         
         })
     }
-    LD_dr(){
+    async LD_dr(){
         var x = (0x0F00 & this.currentOpcode) >>> 8
         this.delayTimer = this.registers[x]
 
         while(this.delayTimer != 0){
             // Do Delay at specified time rate
             this.delayTimer--
+            await sleep(17);
         }
     } // Fx15 - LD DT, Vx
-    LD_sr(){
+    async LD_sr(){
         var x = (0x0F00 & this.currentOpcode) >>> 8
         this.soundTimer = this.registers[x]
 
         while(this.soundTimer != 0){
             // Play Sound at 60 times per second
             this.soundTimer--
+            await sleep(17);
         }
     }
     ADD_ir(){
@@ -461,10 +435,10 @@ class chip8{
         }
     }
 
-    runProgramCycle(){
+    async runProgramCycle(){
         this.fetchProgramCounterInstruction()
         this.programCounter += 2
-        this.decodeAndExecuteInstruction()
+        await this.decodeAndExecuteInstruction()
     }
 
     loadProgram(programBuffer){
@@ -491,7 +465,7 @@ class chip8{
         return opcode;
     }
 
-    decodeAndExecuteInstruction(){
+    async decodeAndExecuteInstruction(){
         console.log("Executing Opcode: " + '0x' + this.currentOpcode.toString(16))
 
         if(this.currentOpcode == 0x00E0){
@@ -576,13 +550,13 @@ class chip8{
             this.LD_rd()
         }
         else if( (0xF0FF & this.currentOpcode) == 0xF00A) {
-            this.LD_rk()
+            await this.LD_rk()
         }
         else if( (0xF0FF & this.currentOpcode) == 0xF015) {
-            this.LD_dr()
+            await this.LD_dr()
         }
         else if( (0xF0FF & this.currentOpcode) == 0xF018) {
-            this.LD_sr()
+            await this.LD_sr()
         }
         else if( (0xF0FF & this.currentOpcode) == 0xF01E) {
             this.ADD_ir()
@@ -601,4 +575,8 @@ class chip8{
         }
     }
 
+}
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
 }
