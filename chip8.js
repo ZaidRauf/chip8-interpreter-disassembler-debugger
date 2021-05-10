@@ -396,7 +396,7 @@ class chip8{
     }
     ADD_ir(){
         var x = (0x0F00 & this.currentOpcode) >>> 8
-        this.indexRegister = (this.indexRegister + this.registers[x]) & 0xFF
+        this.indexRegister = (this.indexRegister + this.registers[x]) & 0xFFFF
     }
     LD_fr(){
         var x = (0x0F00 & this.currentOpcode) >>> 8
