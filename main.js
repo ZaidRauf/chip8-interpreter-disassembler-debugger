@@ -13,8 +13,13 @@ async function runProgram(c8){
   }
 }
 
-function pauseProgram(c8){
+function pauseProgram(){
   running = false
+
+  // const ke = new KeyboardEvent('keydown', {
+  //     bubbles: true, cancelable: true, keyCode: 13
+  // });
+  // document.body.dispatchEvent(ke);
 }
 
 canvas_init(1024)

@@ -106,6 +106,32 @@ class chip8{
 
     }
 
+    reset(){
+        // Instantiates and initializes registers V0, V1, V2, ... VF
+        this.registers = new Array(chip8.NUM_REGISTERS).fill(0)
+
+        // Instantiates and initializes memory
+        this.memory = new Array(chip8.MEMORY_SIZE).fill(0)
+
+        // Pixel Buffer Init
+        this.pixelBuffer = new Array(chip8.PIXEL_BUFFER_HEIGHT)
+
+        for(var x = 0; x < chip8.PIXEL_BUFFER_WIDTH; x++){
+            this.pixelBuffer[x] = new Array(chip8.PIXEL_BUFFER_WIDTH).fill(0)
+        }
+            
+
+        this.stack = []
+        this.indexRegister = 0
+        this.programCounter = 0
+        this.stackPointer = -1 //Is there any need for a stack pointer if im just using .length?
+        this.delayTimer = 0
+        this.soundTimer = 0
+        this.currentOpcode = 0
+
+        this.loadFonts()
+    }
+
     set setCurrentOpcode(newOpcode){
         this.currentOpcode = newOpcode;
     }
@@ -351,6 +377,7 @@ class chip8{
         this.registers[x] = this.delayTimer
     } // Fx07 - LD Vx, DT
     async LD_rk(){
+        console.log(this.currentOpcode)
         var x = (0x0F00 & this.currentOpcode) >>> 8
         await this.blockingKeyPress(x, this)
     }
@@ -358,15 +385,17 @@ class chip8{
     blockingKeyPress(x, c8){
         return new Promise ((resolve) => {
             
-            document.addEventListener('keydown', onKeyHandler);
-            function onKeyHandler(e) {
+            document.addEventListener('keydown', blockingKeyListener);
+            function blockingKeyListener(e) {
                 var keyValue = c8.keyMap.get(e.key)
+                // console.log(e.keyCode)
 
                 if (keyValue !== undefined) {
-                    document.removeEventListener('keydown', onKeyHandler);
+                    document.removeEventListener('keydown', blockingKeyListener);
                     c8.registers[x] = keyValue
                     resolve();
                 }
+
             }
         
         })
@@ -378,7 +407,7 @@ class chip8{
         while(this.delayTimer != 0){
             // Do Delay at specified time rate
             this.delayTimer--
-            await sleep(17);
+            await sleep(16.7);
         }
     } // Fx15 - LD DT, Vx
     async LD_sr(){
@@ -388,7 +417,7 @@ class chip8{
         while(this.soundTimer != 0){
             // Play Sound at 60 times per second
             this.soundTimer--
-            await sleep(17);
+            await sleep(16.7);
         }
     }
     ADD_ir(){
