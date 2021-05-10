@@ -10,22 +10,12 @@ body {
     color: whitesmoke;
 }
 
-/* #romSelect {
-    padding-left: 20px;
-} */
-
-#startBtn{
-    display: inline-block;
-    margin-left: 25px; 
-}
-
-#startBtn{
-    display: inline-block;
-    margin-left: 25px; 
+button {
+    margin-left: 25px;
 }
 
 #romLabel {
     display: inline-block;
-    margin-left: 50px;
+    margin-left: 5px;
 }
 

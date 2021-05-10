@@ -10,9 +10,6 @@
 <body>
     <canvas id="screen"></canvas><br>
     <br>
-    <input type="file" id="input" multiple>
-    <button type="button" id="startBtn" >Start Execution</button>
-    <button type="button" id="pauseBtn">Pause Execution</button>
 
     <label id="romLabel">ROM: </label>
     <select name="roms" id="romSelect">
@@ -20,7 +17,15 @@
         <option value="maze">Maze</option>
         <option value="pong">Pong</option>
         <option value="tetris">Tetris</option>
+        <option value="custom">Custom Program</option>
     </select>
+
+    <button type="button" id="startBtn" >Start Execution</button>
+    <button type="button" id="pauseBtn">Pause Execution</button>
+    <br>
+    <br>
+    <input type="file" id="input">
+
     
 </body>
 

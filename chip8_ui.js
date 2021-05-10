@@ -69,3 +69,21 @@ function initExecutionButtons(c8) {
         pauseProgram();
     };    
 }
+
+function initSelectDropdown() {
+    const customeInput = document.getElementById("input")
+    customeInput.hidden = true;
+
+    const select = document.getElementById("romSelect");
+
+    select.addEventListener('change', () => {
+
+        if(select.value === 'custom'){
+            customeInput.hidden = false;
+        }
+
+        else{
+            customeInput.hidden = true;
+        }
+    })
+}

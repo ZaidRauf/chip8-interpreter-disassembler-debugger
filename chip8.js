@@ -496,112 +496,145 @@ class chip8{
     }
 
     async decodeAndExecuteInstruction(){
+        let opcodePrefix = this.currentOpcode & 0xF000;
 
-        if(this.currentOpcode == 0x00E0){
-            this.CLS()
+        switch(opcodePrefix) {
+            case(0x0000):
+                switch(this.currentOpcode){
+                    case(0x00E0):
+                        this.CLS();
+                        break;
+
+                    case(0x00EE):
+                        this.RET();
+                        break;
+
+                    default:
+                        this.SYS();
+                        break;
+                }
+                break;
+            case(0x1000):
+                this.JP();
+                break;
+            case(0x2000):
+                this.CALL();
+                break;
+            case(0x3000):
+                this.SE_rb();
+                break;
+            case(0x4000):
+                this.SNE_rb();
+                break;
+            case(0x5000):
+                this.SE_rr();
+                break;
+            case(0x6000):
+                this.LD_rb();
+                break;
+            case(0x7000):
+                this.ADD_rb();
+                break;
+            case(0x8000):
+                let binaryOpSuffix = this.currentOpcode & 0xF;
+
+                switch(binaryOpSuffix){
+                    case(0x0):
+                        this.LD_rr();
+                        break;
+                    case(0x1):
+                        this.OR_rr()
+                        break;
+                    case(0x2):
+                        this.AND_rr()
+                        break;
+                    case(0x3):
+                        this.XOR_rr()
+                        break;
+                    case(0x4):
+                        this.ADD_rr()
+                        break;
+                    case(0x5):
+                        this.SUB_rr()
+                        break;
+                    case(0x6):
+                        this.SHR_r()
+                        break;
+                    case(0x7):
+                        this.SUBN_rr()
+                        break;
+                    case(0xE):
+                        this.SHL_r()
+                        break; 
+                }
+                
+                break;
+            case(0x9000):
+                this.SNE_rr()
+                break;
+            case(0xA000):
+                this.LD_ia()
+                break;
+            case(0xB000):
+                this.JP_ra()
+                break;
+            case(0xC000):
+                this.RND_rb();
+                break;
+            case(0xD000):
+                this.DRW_rr();
+                break;
+            case(0xE000):
+                let skpOpcodeSuffix = this.currentOpcode & 0x00FF;
+
+                switch(skpOpcodeSuffix){
+                    case(0x9E):
+                        this.SKP_r()
+                        break;
+                    case(0xA1):
+                        this.SKNP_r()
+                        break;
+                }
+
+                break;
+            case(0xF000):
+                let auxOpcodeSuffix = this.currentOpcode & 0x00FF;
+
+                switch(auxOpcodeSuffix){
+                    case(0x07):
+                        this.LD_rd()
+                        break;
+                    case(0x0A):
+                        await this.LD_rk()
+                        break;
+                    case(0x15):
+                        await this.LD_dr()
+                        break;
+                    case(0x18):
+                        await this.LD_sr()
+                        break;
+                    case(0x1E):
+                        this.ADD_ir();
+                        break;
+                    case(0x29):
+                        this.LD_fr()
+                        break;
+                    case(0x33):
+                        this.LD_br()
+                        break;
+                    case(0x55):
+                        this.LD_ar()
+                        break;
+                    case(0x65):
+                        this.LD_ra();
+                        break;
+                }
+                break;
+
+            default:
+                break;
         }
-        else if(this.currentOpcode == 0x00EE) {
-            this.RET()
-        }
-        else if( (0xF000 & this.currentOpcode) == 0x0000) {
-            this.SYS()
-        }
-        else if( (0xF000 & this.currentOpcode) == 0x1000) {
-            this.JP()
-        }
-        else if( (0xF000 & this.currentOpcode) == 0x2000) {
-            this.CALL()
-        }
-        else if( (0xF000 & this.currentOpcode) == 0x3000) {
-            this.SE_rb()
-        }
-        else if( (0xF000 & this.currentOpcode) == 0x4000) {
-            this.SNE_rb()
-        }
-        else if( (0xF000 & this.currentOpcode) == 0x5000) {
-            this.SE_rr()
-        }
-        else if( (0xF000 & this.currentOpcode) == 0x6000) {
-            this.LD_rb()
-        }
-        else if( (0xF000 & this.currentOpcode) == 0x7000) {
-            this.ADD_rb()
-        }
-        else if( (0xF00F & this.currentOpcode) == 0x8000) {
-            this.LD_rr()
-        }
-        else if( (0xF00F & this.currentOpcode) == 0x8001) {
-            this.OR_rr()
-        }
-        else if( (0xF00F & this.currentOpcode) == 0x8002) {
-            this.AND_rr()
-        }
-        else if( (0xF00F & this.currentOpcode) == 0x8003) {
-            this.XOR_rr()
-        }
-        else if( (0xF00F & this.currentOpcode) == 0x8004) {
-            this.ADD_rr()
-        }
-        else if( (0xF00F & this.currentOpcode) == 0x8005) {
-            this.SUB_rr()
-        }
-        else if( (0xF00F & this.currentOpcode) == 0x8006) {
-            this.SHR_r()
-        }
-        else if( (0xF00F & this.currentOpcode) == 0x8007) {
-            this.SUBN_rr()
-        }
-        else if( (0xF00F & this.currentOpcode) == 0x800E) {
-            this.SHL_r()
-        }
-        else if( (0xF00F & this.currentOpcode) == 0x9000) {
-            this.SNE_rr()
-        }
-        else if( (0xF000 & this.currentOpcode) == 0xA000) {
-            this.LD_ia()
-        }
-        else if( (0xF000 & this.currentOpcode) == 0xB000) {
-            this.JP_ra()
-        }
-        else if( (0xF000 & this.currentOpcode) == 0xC000) {
-            this.RND_rb()
-        }
-        else if( (0xF000 & this.currentOpcode) == 0xD000) {
-            this.DRW_rr()
-        }
-        else if( (0xF0FF & this.currentOpcode) == 0xE09E) {
-            this.SKP_r()
-        }
-        else if( (0xF0FF & this.currentOpcode) == 0xE0A1) {
-            this.SKNP_r()
-        }
-        else if( (0xF0FF & this.currentOpcode) == 0xF007) {
-            this.LD_rd()
-        }
-        else if( (0xF0FF & this.currentOpcode) == 0xF00A) {
-            await this.LD_rk()
-        }
-        else if( (0xF0FF & this.currentOpcode) == 0xF015) {
-            await this.LD_dr()
-        }
-        else if( (0xF0FF & this.currentOpcode) == 0xF018) {
-            await this.LD_sr()
-        }
-        else if( (0xF0FF & this.currentOpcode) == 0xF01E) {
-            this.ADD_ir()
-        }
-        else if( (0xF0FF & this.currentOpcode) == 0xF029) {
-            this.LD_fr()
-        }
-        else if( (0xF0FF & this.currentOpcode) == 0xF033) {
-            this.LD_br()
-        }
-        else if( (0xF0FF & this.currentOpcode) == 0xF055) {
-            this.LD_ar()
-        }
-        else if( (0xF0FF & this.currentOpcode) == 0xF065) {
-            this.LD_ra()
-        }
+
     }
 
 }
