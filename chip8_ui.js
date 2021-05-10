@@ -4,9 +4,7 @@ var PIXEL_SIZE = 0
 const canvas = document.getElementById('screen')
 const context = canvas.getContext('2d')
 
-// Width is power of 2
 function canvas_init(width){
-    // const canvas = document.getElementById('screen')
     canvas.width = width
     canvas.height = width/2
 
@@ -14,8 +12,6 @@ function canvas_init(width){
 }
 
 function render_pixel_buffer(pixel_buffer){
-    // const canvas = document.getElementById('screen')
-    // const context = canvas.getContext('2d')
     context.fillStyle = 'white'
     context.clearRect(0, 0, canvas.width, canvas.height) // Neccesarry?
 
@@ -47,11 +43,29 @@ function read_chip8_file_init(c8){
             let typedArray = new Uint8Array(fileReader.result)
 
             c8.reset()
-            // c8.resetMemory()
+
             c8.loadProgram(typedArray)
           };
     
 
     }, false)
 
+}
+
+function initExecutionButtons(c8) {
+    document.getElementById("pauseBtn").hidden = true;
+
+    document.getElementById("startBtn").onclick = function(){
+        document.getElementById("startBtn").hidden = true;
+        document.getElementById("pauseBtn").hidden = false;
+
+        runProgram(c8);
+    };
+
+    document.getElementById("pauseBtn").onclick = function(){
+        document.getElementById("startBtn").hidden = false;
+        document.getElementById("pauseBtn").hidden = true;
+
+        pauseProgram();
+    };    
 }

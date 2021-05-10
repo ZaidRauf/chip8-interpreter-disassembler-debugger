@@ -13,9 +13,19 @@
     <input type="file" id="input" multiple>
     <button type="button" id="startBtn" >Start Execution</button>
     <button type="button" id="pauseBtn">Pause Execution</button>
+
+    <label id="romLabel">ROM: </label>
+    <select name="roms" id="romSelect">
+        <option value="" disabled selected>Select ROM</option>
+        <option value="maze">Maze</option>
+        <option value="pong">Pong</option>
+        <option value="tetris">Tetris</option>
+    </select>
+    
 </body>
 
-<script src='chip8_ui.js' type='text/javascript'></script>
 <script src='chip8.js' type='text/javascript'></script>
+<script src='chip8_controller.js' type='text/javascript'></script>
+<script src='chip8_ui.js' type='text/javascript'></script>
 <script src='main.js' type='text/javascript'></script>
 </html>

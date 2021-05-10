@@ -39,6 +39,11 @@ class chip8{
         return 0x200
     }
 
+
+    static get TIMER_WAIT_TIME() { 
+        return 16.7
+    }
+
     static randomByteGenerator(){
         return Math.floor(Math.random() * 256)
     }
@@ -377,7 +382,6 @@ class chip8{
         this.registers[x] = this.delayTimer
     } // Fx07 - LD Vx, DT
     async LD_rk(){
-        console.log(this.currentOpcode)
         var x = (0x0F00 & this.currentOpcode) >>> 8
         await this.blockingKeyPress(x, this)
     }
@@ -407,7 +411,7 @@ class chip8{
         while(this.delayTimer != 0){
             // Do Delay at specified time rate
             this.delayTimer--
-            await sleep(16.7);
+            await this.sleep(chip8.TIMER_WAIT_TIME);
         }
     } // Fx15 - LD DT, Vx
     async LD_sr(){
@@ -417,7 +421,7 @@ class chip8{
         while(this.soundTimer != 0){
             // Play Sound at 60 times per second
             this.soundTimer--
-            await sleep(16.7);
+            await this.sleep(chip8.TIMER_WAIT_TIME);
         }
     }
     ADD_ir(){
@@ -485,6 +489,10 @@ class chip8{
         this.currentOpcode = opcode
 
         return opcode;
+    }
+
+    sleep(ms) {
+        return new Promise((resolve) => setTimeout(resolve, ms));
     }
 
     async decodeAndExecuteInstruction(){
@@ -596,8 +604,4 @@ class chip8{
         }
     }
 
-}
-
-function sleep(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
 }
