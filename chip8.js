@@ -104,9 +104,6 @@ class chip8{
 
         this.inputListener();
 
-        this.interval = null;
-        this.midCycle = true;
-
     }
 
     set setCurrentOpcode(newOpcode){
@@ -254,11 +251,10 @@ class chip8{
     SHR_r(){
         var x = (0x0F00 & this.currentOpcode) >>> 8
         var y = (0x00F0 & this.currentOpcode) >>> 4
-        
-        if((this.registers[x] & 0x1) === 0x1) this.registers[chip8.FLAG_REGISTER] = 1
-        else this.registers[chip8.FLAG_REGISTER] = 0
 
-        this.registers[x] = this.registers[x] >>> 1
+        this.registers[chip8.FLAG_REGISTER] = this.registers[x] & 0x1
+
+        this.registers[x] = (this.registers[x] >>> 1) & 0xFF
     }
     SUBN_rr(){
         var x = (0x0F00 & this.currentOpcode) >>> 8
@@ -274,10 +270,9 @@ class chip8{
         var x = (0x0F00 & this.currentOpcode) >>> 8
         var y = (0x00F0 & this.currentOpcode) >>> 4
 
-        if((this.registers[x] & 0x80) === 0x80) this.registers[chip8.FLAG_REGISTER] = 1
-        else this.registers[chip8.FLAG_REGISTER] = 0
+        this.registers[chip8.FLAG_REGISTER] = (this.registers[x] & 0x80) >>> 7 
 
-        this.registers[x] = this.registers[x] << 1
+        this.registers[x] = (this.registers[x] << 1) & 0xFF
     }
     SNE_rr(){
         var x = (0x0F00 & this.currentOpcode) >>> 8
@@ -320,7 +315,7 @@ class chip8{
                 
                 var x_pixel_pos = (x_draw_pixel + x_pixel_offset) % chip8.PIXEL_BUFFER_WIDTH
 
-                if(this.pixelBuffer[x_pixel_pos][y_pixel_pos] == 1 && display_bit == 1){
+                if(this.pixelBuffer[x_pixel_pos][y_pixel_pos] === 1 && display_bit === 1){
                     this.registers[chip8.FLAG_REGISTER] = 1
                 }
 
@@ -401,19 +396,20 @@ class chip8{
     }
     ADD_ir(){
         var x = (0x0F00 & this.currentOpcode) >>> 8
-        this.indexRegister = (this.indexRegister+ this.registers[x]) & 0xFF
+        this.indexRegister = (this.indexRegister + this.registers[x]) & 0xFF
     }
     LD_fr(){
         var x = (0x0F00 & this.currentOpcode) >>> 8
-        this.indexRegister = c8.FONT_START_OFFSET + (this.registers[x] * 0x5)
+        this.indexRegister = chip8.FONT_START_OFFSET + (this.registers[x] * 0x5)
     }
     LD_br(){
         var x = (0x0F00 & this.currentOpcode) >>> 8
         var bcd_val = this.registers[x]
-
+        console.log(bcd_val)
         var least_significant_digit = bcd_val % 10
         var mid_significant_digit = ((bcd_val % 100) - least_significant_digit) / 10
         var most_significant_digit = ((bcd_val) - ((bcd_val % 100) - least_significant_digit) - least_significant_digit) / 100
+        console.log(most_significant_digit, mid_significant_digit, least_significant_digit)
 
         this.memory[this.indexRegister] = most_significant_digit
         this.memory[this.indexRegister + 1] = mid_significant_digit
@@ -424,7 +420,7 @@ class chip8{
         var x = (0x0F00 & this.currentOpcode) >>> 8
 
         for(let k = 0; k <= x; k++){
-            this.memory[this.indexRegister + k] = this.registers[k]
+            this.memory[this.indexRegister + k] = this.registers[k]           
         }
     }
     LD_ra(){
@@ -433,6 +429,7 @@ class chip8{
         for(let k = 0; k <= x; k++){
             this.registers[k] = this.memory[this.indexRegister + k]
         }
+
     }
 
     async runProgramCycle(){
@@ -466,7 +463,8 @@ class chip8{
     }
 
     async decodeAndExecuteInstruction(){
-        console.log("Executing Opcode: " + '0x' + this.currentOpcode.toString(16))
+        console.log("Executing Opcode: " + '0x' + this.currentOpcode.toString(16).toUpperCase())
+        // console.log(this)
 
         if(this.currentOpcode == 0x00E0){
             this.CLS()
