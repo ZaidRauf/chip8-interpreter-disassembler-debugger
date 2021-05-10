@@ -150,7 +150,7 @@ class chip8{
     }
 
     //Instruction Functions
-    SYS(){ console.log("SYS call does nothing") }
+    SYS(){ return }
     CLS(){
 
         for(var x = 0; x < chip8.PIXEL_BUFFER_WIDTH; x++){
@@ -351,10 +351,8 @@ class chip8{
         this.registers[x] = this.delayTimer
     } // Fx07 - LD Vx, DT
     async LD_rk(){
-        console.log("Load key press entered")
         var x = (0x0F00 & this.currentOpcode) >>> 8
         await this.blockingKeyPress(x, this)
-        console.log("Load key press exited")
     }
 
     blockingKeyPress(x, c8){
@@ -363,7 +361,6 @@ class chip8{
             document.addEventListener('keydown', onKeyHandler);
             function onKeyHandler(e) {
                 var keyValue = c8.keyMap.get(e.key)
-                console.log(keyValue)
 
                 if (keyValue !== undefined) {
                     document.removeEventListener('keydown', onKeyHandler);
@@ -405,11 +402,10 @@ class chip8{
     LD_br(){
         var x = (0x0F00 & this.currentOpcode) >>> 8
         var bcd_val = this.registers[x]
-        console.log(bcd_val)
+
         var least_significant_digit = bcd_val % 10
         var mid_significant_digit = ((bcd_val % 100) - least_significant_digit) / 10
         var most_significant_digit = ((bcd_val) - ((bcd_val % 100) - least_significant_digit) - least_significant_digit) / 100
-        console.log(most_significant_digit, mid_significant_digit, least_significant_digit)
 
         this.memory[this.indexRegister] = most_significant_digit
         this.memory[this.indexRegister + 1] = mid_significant_digit
@@ -463,8 +459,6 @@ class chip8{
     }
 
     async decodeAndExecuteInstruction(){
-        console.log("Executing Opcode: " + '0x' + this.currentOpcode.toString(16).toUpperCase())
-        // console.log(this)
 
         if(this.currentOpcode == 0x00E0){
             this.CLS()
@@ -576,5 +570,5 @@ class chip8{
 }
 
 function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
