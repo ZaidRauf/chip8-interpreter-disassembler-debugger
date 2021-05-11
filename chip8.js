@@ -23,7 +23,7 @@ class chip8{
     }
 
     // Can be loaded in anywhere is arbitrary
-    static get FONT_START_OFFSET() { 
+    static get DIGIT_START_OFFSET() { 
         return 0x10
     }
 
@@ -49,27 +49,25 @@ class chip8{
     }
 
     loadFonts(){
-        var fontSet =
-        [
-        0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
-        0x20, 0x60, 0x20, 0x20, 0x70, // 1
-        0xF0, 0x10, 0xF0, 0x80, 0xF0, // 2
-        0xF0, 0x10, 0xF0, 0x10, 0xF0, // 3
-        0x90, 0x90, 0xF0, 0x10, 0x10, // 4
-        0xF0, 0x80, 0xF0, 0x10, 0xF0, // 5
-        0xF0, 0x80, 0xF0, 0x90, 0xF0, // 6
-        0xF0, 0x10, 0x20, 0x40, 0x40, // 7
-        0xF0, 0x90, 0xF0, 0x90, 0xF0, // 8
-        0xF0, 0x90, 0xF0, 0x10, 0xF0, // 9
-        0xF0, 0x90, 0xF0, 0x90, 0x90, // A
-        0xE0, 0x90, 0xE0, 0x90, 0xE0, // B
-        0xF0, 0x80, 0x80, 0x80, 0xF0, // C
-        0xE0, 0x90, 0x90, 0x90, 0xE0, // D
-        0xF0, 0x80, 0xF0, 0x80, 0xF0, // E
-        0xF0, 0x80, 0xF0, 0x80, 0x80  // F
-        ]
+        var digitSprites =
+        [   0xF0, 0x90, 0x90, 0x90, 0xF0,
+            0x20, 0x60, 0x20, 0x20, 0x70,
+            0xF0, 0x10, 0xF0, 0x80, 0xF0,
+            0xF0, 0x10, 0xF0, 0x10, 0xF0,
+            0x90, 0x90, 0xF0, 0x10, 0x10,
+            0xF0, 0x80, 0xF0, 0x10, 0xF0,
+            0xF0, 0x80, 0xF0, 0x90, 0xF0,
+            0xF0, 0x10, 0x20, 0x40, 0x40,
+            0xF0, 0x90, 0xF0, 0x90, 0xF0,
+            0xF0, 0x90, 0xF0, 0x10, 0xF0,
+            0xF0, 0x90, 0xF0, 0x90, 0x90,
+            0xE0, 0x90, 0xE0, 0x90, 0xE0,
+            0xF0, 0x80, 0x80, 0x80, 0xF0,
+            0xE0, 0x90, 0x90, 0x90, 0xE0,
+            0xF0, 0x80, 0xF0, 0x80, 0xF0,
+            0xF0, 0x80, 0xF0, 0x80, 0x80 ]
 
-        fontSet.forEach((element, index) => this.memory[chip8.FONT_START_OFFSET + index] = element)
+        digitSprites.forEach((element, index) => this.memory[chip8.DIGIT_START_OFFSET + index] = element)
         
     }
 
@@ -384,8 +382,12 @@ class chip8{
         this.registers[x] = this.delayTimer
     } // Fx07 - LD Vx, DT
     async LD_rk(){
+        this.awaitingBlockingKeypress = true
+
         var x = (0x0F00 & this.currentOpcode) >>> 8
         await this.blockingKeyPress(x, this)
+
+        this.awaitingBlockingKeypress = false
     }
 
     blockingKeyPress(x, c8){
@@ -394,11 +396,15 @@ class chip8{
             document.addEventListener('keydown', blockingKeyListener);
             function blockingKeyListener(e) {
                 var keyValue = c8.keyMap.get(e.key)
-                // console.log(e.keyCode)
 
                 if (keyValue !== undefined) {
                     document.removeEventListener('keydown', blockingKeyListener);
                     c8.registers[x] = keyValue
+                    resolve();
+                }
+
+                else if (e.keyCode === 13){
+                    document.removeEventListener('keydown', blockingKeyListener);
                     resolve();
                 }
 
@@ -425,6 +431,7 @@ class chip8{
             this.soundTimer--
             await this.sleep(chip8.TIMER_WAIT_TIME);
         }
+
     }
     ADD_ir(){
         var x = (0x0F00 & this.currentOpcode) >>> 8
@@ -432,7 +439,7 @@ class chip8{
     }
     LD_fr(){
         var x = (0x0F00 & this.currentOpcode) >>> 8
-        this.indexRegister = chip8.FONT_START_OFFSET + (this.registers[x] * 0x5)
+        this.indexRegister = chip8.DIGIT_START_OFFSET + (this.registers[x] * 0x5)
     }
     LD_br(){
         var x = (0x0F00 & this.currentOpcode) >>> 8

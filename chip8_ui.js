@@ -1,6 +1,8 @@
 "use strict"
 
 var PIXEL_SIZE = 0
+var foregroundColor = '#FFFFFF'
+
 const canvas = document.getElementById('screen')
 const context = canvas.getContext('2d')
 
@@ -14,7 +16,7 @@ function canvas_init(width){
 }
 
 function render_pixel_buffer(pixel_buffer){
-    context.fillStyle = 'white'
+    context.fillStyle = foregroundColor
     context.clearRect(0, 0, canvas.width, canvas.height) // Neccesarry?
 
     for(var x = 0; x < 64; x++){
@@ -36,7 +38,7 @@ function read_chip8_file_init(c8){
     inputElement.addEventListener("change", function () {
 
         const fileList = this.files; /* now you can work with the file list */
-        console.log(fileList[0])
+
         var fileReader = new FileReader()
         
         fileReader.readAsArrayBuffer(fileList[0])
@@ -44,7 +46,9 @@ function read_chip8_file_init(c8){
         fileReader.onload = function() {
             let typedArray = new Uint8Array(fileReader.result)
 
-            pauseProgram()
+            document.getElementById("startBtn").disabled = false
+
+            pauseProgram(c8)
             
             c8.reset()
             c8.loadProgram(typedArray)
@@ -75,8 +79,25 @@ function initExecutionButtons(c8) {
         document.getElementById("startBtn").hidden = false;
         document.getElementById("pauseBtn").hidden = true;
 
-        pauseProgram();
+        pauseProgram(c8);
     };    
+}
+
+function initColorPicker(c8) {
+    const foregroundInput = document.getElementById("foregroundColorInput")
+
+    foregroundInput.onchange = () => {
+        foregroundColor = foregroundInput.value
+
+        render_pixel_buffer(c8.pixelBuffer)
+    }
+
+    const backgroundInput = document.getElementById("backgroundColorInput")
+    
+    backgroundInput.onchange = () => {
+        let backgroundColor = backgroundInput.value
+        canvas.style.backgroundColor = backgroundColor
+    }
 }
 
 function initSelectDropdown(c8) {
@@ -88,6 +109,13 @@ function initSelectDropdown(c8) {
 
         if(select.value === 'custom'){
             customInput.hidden = false;
+
+            pauseProgram(c8)
+
+            document.getElementById("startBtn").disabled = true
+            document.getElementById("startBtn").hidden = false;
+            document.getElementById("pauseBtn").hidden = true;
+
         }
 
         else{
@@ -115,12 +143,13 @@ function initSelectDropdown(c8) {
 
                         let typedArray = new Uint8Array(value)
 
-                        pauseProgram()
+                        pauseProgram(c8)
 
                         c8.reset()
                         c8.loadProgram(typedArray)
-
+                        
                         document.getElementById("startBtn").hidden = true;
+                        document.getElementById("startBtn").disabled = false
                         document.getElementById("pauseBtn").hidden = false;
             
                         runProgram(c8)
@@ -136,4 +165,38 @@ function initSelectDropdown(c8) {
     option.value = 'custom'
     select.add(option)
 
+}
+
+function initRegisterInfo(c8){
+    let pcSpan = document.getElementById('pcSpan')
+    let indexSpan = document.getElementById('iSpan')
+    let delaySpan = document.getElementById('dtSpan')
+    let soundSpan = document.getElementById('stSpan')
+
+
+    setInterval(() => {
+        pcSpan.innerHTML = '0x' + c8.programCounter.toString(16)
+        indexSpan.innerHTML = '0x' + c8.indexRegister.toString(16)
+        delaySpan.innerHTML = '0x' + c8.delayTimer.toString(16)
+        soundSpan.innerHTML = '0x' + c8.soundTimer.toString(16)
+
+        c8.registers.forEach((item, index) => {
+            let registerSpan = document.getElementById('v' + index.toString(16) + 'Span')
+            registerSpan.innerHTML = '0x' + item.toString(16)
+        })
+
+        let stackPrint = ['---','---','---','---','---','---','---','---','---','---','---','---','---','---','---','---',]
+
+        c8.stack.forEach((item, index) => {
+            stackPrint[index] = '0x' + item.toString(16);
+        })
+
+        stackPrint.forEach((item, index) => {
+            let stackItem = document.getElementById('stackItem' + index);
+            stackItem.innerHTML = item;
+        })
+
+
+        
+    }, 2)
 }
