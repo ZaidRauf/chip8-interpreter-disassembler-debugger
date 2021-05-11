@@ -96,6 +96,8 @@ class chip8{
         this.soundTimer = 0
         this.currentOpcode = 0
 
+        this.awaitingBlockingKeypress = false
+
         this.inputKeys = Array(chip8.NUM_KEYS).fill(false);
 
         this.keyArr = ['x', '1', '2', '3', 'q', 'w', 'e', 'a', 's', 'd', 'z', 'c', '4', 'r', 'f', 'v']

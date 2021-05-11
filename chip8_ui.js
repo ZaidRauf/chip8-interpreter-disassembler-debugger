@@ -4,6 +4,8 @@ var PIXEL_SIZE = 0
 const canvas = document.getElementById('screen')
 const context = canvas.getContext('2d')
 
+const romList = ['Maze', 'Pong', 'Connect-4', 'Tic-Tac-Toe', 'Tetris', 'KeypadTest', 'Sierpinski']
+
 function canvas_init(width){
     canvas.width = width
     canvas.height = width/2
@@ -34,18 +36,25 @@ function read_chip8_file_init(c8){
     inputElement.addEventListener("change", function () {
 
         const fileList = this.files; /* now you can work with the file list */
+        console.log(fileList[0])
+        var fileReader = new FileReader()
         
-          var fileReader = new FileReader()
+        fileReader.readAsArrayBuffer(fileList[0])
         
-          fileReader.readAsArrayBuffer(fileList[0])
-        
-          fileReader.onload = function() {        
+        fileReader.onload = function() {
             let typedArray = new Uint8Array(fileReader.result)
 
+            pauseProgram()
+            
             c8.reset()
-
             c8.loadProgram(typedArray)
-          };
+
+            document.getElementById("startBtn").hidden = true;
+            document.getElementById("pauseBtn").hidden = false;
+
+            runProgram(c8)
+
+        };
     
 
     }, false)
@@ -70,20 +79,61 @@ function initExecutionButtons(c8) {
     };    
 }
 
-function initSelectDropdown() {
-    const customeInput = document.getElementById("input")
-    customeInput.hidden = true;
-
+function initSelectDropdown(c8) {
+    const customInput = document.getElementById("input")
+    customInput.hidden = true;
     const select = document.getElementById("romSelect");
 
     select.addEventListener('change', () => {
 
         if(select.value === 'custom'){
-            customeInput.hidden = false;
+            customInput.hidden = false;
         }
 
         else{
-            customeInput.hidden = true;
+            customInput.hidden = true;
         }
     })
+    
+    romList.forEach((item, index) => {
+
+        const select = document.getElementById('romSelect')
+
+        let option = document.createElement('option')
+        option.text = item
+        option.value = index.toString()
+
+        select.add(option)
+
+        select.addEventListener('change', () => {
+
+            if(select.value == index){
+                fetch('/roms/' + item + '.c8')
+                .then(response => response.body.getReader().read()
+                .then(
+                    function loadRom({done, value}){
+
+                        let typedArray = new Uint8Array(value)
+
+                        pauseProgram()
+
+                        c8.reset()
+                        c8.loadProgram(typedArray)
+
+                        document.getElementById("startBtn").hidden = true;
+                        document.getElementById("pauseBtn").hidden = false;
+            
+                        runProgram(c8)
+                    }
+                ))
+            }
+
+        })
+    })
+
+    let option = document.createElement('option')
+    option.text = 'Custom Program'
+    option.value = 'custom'
+    select.add(option)
+
 }
