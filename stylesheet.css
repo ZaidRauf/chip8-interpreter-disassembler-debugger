@@ -94,11 +94,11 @@ button {
 }
 
 #scrollableInstructions {
-    overflow-y: auto;
     height: 20em;
     width: 15em;
     text-align: left;
     list-style-position: inside;
+    overflow-y: hidden;
 }
 
 ol.hide-bullets {

@@ -2,6 +2,7 @@
 
 var PIXEL_SIZE = 0
 var foregroundColor = '#FFFFFF'
+var previousInstr = ''
 
 const canvas = document.getElementById('screen')
 const context = canvas.getContext('2d')
@@ -185,14 +186,33 @@ function disassembleAndDisplay(byteArrayProgram){
         let instructionLabel = "0x" + ((index * 2) + chip8.PROGRAM_START).toString(16).toUpperCase() + ":"
 
         listElement.onclick = () => {
-            console.log(listElement.id)
+
+            if(running || index === Math.floor(((c8.programCounter - chip8.PROGRAM_START))/2)){
+                console.log('Running or Match: ' + index + ' ' + Math.floor(((c8.programCounter - chip8.PROGRAM_START))/2))
+                return;
+            }
+
+            else if(!breakpointSet.has(index)){
+                listElement.style.backgroundColor = 'rgba(255,0,0,0.35)'
+                breakpointSet.add(index)
+                console.log('Index Added: ' + index + ' Total: ' + breakpointSet.size)
+            }
+
+            else{
+                listElement.style.backgroundColor = ''
+                breakpointSet.delete(index)
+                console.log('Index Removed: ' + index + ' Total: ' + breakpointSet.size)
+            }
+
         }
 
         listElement.appendChild(document.createTextNode( instructionLabel + " " + item));
         
         instructionList.appendChild(listElement)
     })
-    
+
+
+    document.getElementById('instr0').scrollIntoView()    
 }
 
 function initRegisterInfo(c8){
@@ -203,10 +223,11 @@ function initRegisterInfo(c8){
 
 
     setInterval(() => {
-        pcSpan.innerHTML = '0x' + c8.programCounter.toString(16)
-        indexSpan.innerHTML = '0x' + c8.indexRegister.toString(16)
-        delaySpan.innerHTML = '0x' + c8.delayTimer.toString(16)
-        soundSpan.innerHTML = '0x' + c8.soundTimer.toString(16)
+        var pcValue = c8.programCounter;
+        pcSpan.innerHTML = '0x' + pcValue.toString(16);
+        indexSpan.innerHTML = '0x' + c8.indexRegister.toString(16);
+        delaySpan.innerHTML = '0x' + c8.delayTimer.toString(16);
+        soundSpan.innerHTML = '0x' + c8.soundTimer.toString(16);
 
         c8.registers.forEach((item, index) => {
             let registerSpan = document.getElementById('v' + index.toString(16) + 'Span')
@@ -224,7 +245,21 @@ function initRegisterInfo(c8){
             stackItem.innerHTML = '0x' + index.toString(16).toUpperCase() + ': ' + item;
         })
 
+        try{
+            let pcNoOffset = Math.floor((pcValue - chip8.PROGRAM_START)/2);
+            let currentInstr = document.getElementById('instr' + pcNoOffset)
 
-        
+            if(previousInstr !== ''){
+                previousInstr.style.backgroundColor = ''
+            }
+
+            currentInstr.style.backgroundColor = 'rgba(0,255,0,0.35)'
+            currentInstr.scrollIntoView()
+            previousInstr = currentInstr
+        }
+        catch(e){
+
+        }
+
     }, 2)
 }

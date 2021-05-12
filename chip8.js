@@ -98,7 +98,7 @@ class chip8{
 
         this.inputKeys = Array(chip8.NUM_KEYS).fill(false);
 
-        this.keyArr = ['x', '1', '2', '3', 'q', 'w', 'e', 'a', 's', 'd', 'z', 'c', '4', 'r', 'f', 'v']
+        this.keyArr = ['KeyX', 'Digit1', 'Digit2', 'Digit3', 'KeyQ', 'KeyW', 'KeyE', 'KeyA', 'KeyS', 'KeyD', 'KeyZ', 'KeyC', 'Digit4', 'KeyR', 'KeyF', 'KeyV']
         this.keyMap = new Map();
         
         this.keyArr.forEach((value, index) => {
@@ -152,7 +152,7 @@ class chip8{
     inputListener(){
 
         document.addEventListener('keydown', (event)=>{
-            const pressedKey = event.key
+            const pressedKey = event.code
 
             let keyValue = this.keyMap.get(pressedKey)
 
@@ -160,15 +160,10 @@ class chip8{
                 this.pressKey = keyValue
             }
 
-            else if(pressedKey === 'm'){
-                this.runProgramCycle()
-                render_pixel_buffer(this.pixelBuffer)    
-            }
-
         }, false)
 
         document.addEventListener('keyup', (event)=>{
-            const releasedKey = event.key
+            const releasedKey = event.code
 
             let keyValue = this.keyMap.get(releasedKey)
 
@@ -395,7 +390,7 @@ class chip8{
             
             document.addEventListener('keydown', blockingKeyListener);
             function blockingKeyListener(e) {
-                var keyValue = c8.keyMap.get(e.key)
+                var keyValue = c8.keyMap.get(e.code)
 
                 if (keyValue !== undefined) {
                     document.removeEventListener('keydown', blockingKeyListener);
@@ -403,7 +398,7 @@ class chip8{
                     resolve();
                 }
 
-                else if (e.keyCode === 13){
+                else if (e.keyCode === -1){
                     document.removeEventListener('keydown', blockingKeyListener);
                     resolve();
                 }
