@@ -27,7 +27,7 @@
             <label>Stack:</label>
             <br>
             <div id="scrollableStack">
-                <ol>
+                <ol class='hide-bullets' start="0">
                     <li id='stackItem0'>---</li>
                     <li id='stackItem1'>---</li>
                     <li id='stackItem2'>---</li>
@@ -104,6 +104,29 @@
                 <label>VF: <span id="vfSpan">---</span></label>
             </div>
         </div>
+        <div id="instructionsPanel">
+            <label>Instructions: </label>
+            <div id="scrollableInstructions">
+                <ol class='hide-bullets' id='instructionList'>
+                    <li>0x200: ---</li>
+                    <li>0x202: ---</li>
+                    <li>0x204: ---</li>
+                    <li>0x206: ---</li>
+                    <li>0x208: ---</li>
+                    <li>0x20A: ---</li>
+                    <li>0x20C: ---</li>
+                    <li>0x20E: ---</li>
+                    <li>0x210: ---</li>
+                    <li>0x212: ---</li>
+                    <li>0x214: ---</li>
+                    <li>0x216: ---</li>
+                    <li>0x218: ---</li>
+                    <li>0x21A: ---</li>
+                    <li>0x21C: ---</li>
+                    <li>0x21E: ---</li>
+                </ol>
+            </div>
+        </div>
 
     </div>
     
@@ -130,6 +153,7 @@
 
 </body>
 
+<script src='chip8_disassembler.js' type='text/javascript'></script>
 <script src='chip8.js' type='text/javascript'></script>
 <script src='chip8_controller.js' type='text/javascript'></script>
 <script src='chip8_ui.js' type='text/javascript'></script>

@@ -17,7 +17,7 @@ function canvas_init(width){
 
 function render_pixel_buffer(pixel_buffer){
     context.fillStyle = foregroundColor
-    context.clearRect(0, 0, canvas.width, canvas.height) // Neccesarry?
+    context.clearRect(0, 0, canvas.width, canvas.height)
 
     for(var x = 0; x < 64; x++){
 
@@ -45,6 +45,8 @@ function read_chip8_file_init(c8){
         
         fileReader.onload = function() {
             let typedArray = new Uint8Array(fileReader.result)
+
+            disassembleAndDisplay(typedArray);
 
             document.getElementById("startBtn").disabled = false
 
@@ -143,6 +145,8 @@ function initSelectDropdown(c8) {
 
                         let typedArray = new Uint8Array(value)
 
+                        disassembleAndDisplay(typedArray)
+
                         pauseProgram(c8)
 
                         c8.reset()
@@ -165,6 +169,30 @@ function initSelectDropdown(c8) {
     option.value = 'custom'
     select.add(option)
 
+}
+
+function disassembleAndDisplay(byteArrayProgram){
+    let instructionDisassembly = disassembleProgram(byteArrayProgram)
+
+    let instructionList = document.getElementById('instructionList')
+    instructionList.innerHTML = ''
+
+    instructionDisassembly.forEach((item, index) => {
+        
+        let listElement = document.createElement('li');
+        listElement.id = 'instr' + index;
+
+        let instructionLabel = "0x" + ((index * 2) + chip8.PROGRAM_START).toString(16).toUpperCase() + ":"
+
+        listElement.onclick = () => {
+            console.log(listElement.id)
+        }
+
+        listElement.appendChild(document.createTextNode( instructionLabel + " " + item));
+        
+        instructionList.appendChild(listElement)
+    })
+    
 }
 
 function initRegisterInfo(c8){
@@ -193,7 +221,7 @@ function initRegisterInfo(c8){
 
         stackPrint.forEach((item, index) => {
             let stackItem = document.getElementById('stackItem' + index);
-            stackItem.innerHTML = item;
+            stackItem.innerHTML = '0x' + index.toString(16).toUpperCase() + ': ' + item;
         })
 
 

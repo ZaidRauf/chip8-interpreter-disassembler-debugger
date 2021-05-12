@@ -494,9 +494,9 @@ class chip8{
         let upperHalf = this.memory[this.programCounter] << 8
         let lowerHalf = this.memory[this.programCounter + 1]
         let opcode = upperHalf + lowerHalf
+        // console.log(dissasembleInstruction(opcode))
 
         this.currentOpcode = opcode
-
         return opcode;
     }
 
@@ -574,7 +574,9 @@ class chip8{
                         break;
                     case(0xE):
                         this.SHL_r()
-                        break; 
+                        break;        
+                    default:
+                        break;
                 }
                 
                 break;
@@ -602,6 +604,8 @@ class chip8{
                         break;
                     case(0xA1):
                         this.SKNP_r()
+                        break;
+                    default:
                         break;
                 }
 
@@ -636,6 +640,9 @@ class chip8{
                         break;
                     case(0x65):
                         this.LD_ra();
+                        break;
+
+                    default:
                         break;
                 }
                 break;

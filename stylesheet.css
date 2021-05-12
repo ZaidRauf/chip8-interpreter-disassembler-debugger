@@ -49,7 +49,8 @@ button {
 
 #registers1 {
     vertical-align: top;
-    display:inline-block
+    display:inline-block;
+    width: 14em;
 }
 
 #gpRegistersLabel{
@@ -63,25 +64,45 @@ button {
 
 #registers2 {
     display:inline-block;
+    width: 5em;
 }
 
 #registers3 {
     display:inline-block;
     margin-left: 87px;
+    width: 5em;
 }
 
 
 #stackDiv {
     display: inline-block;
     vertical-align: top;
-    margin-left: 5em
+    margin-left: 5em;
 }
  
 
 #scrollableStack {
     height: 6.5em;
-    margin: 0em;
     padding-right: 1.5em;
     overflow-y: auto;
- }
+}
  
+#instructionsPanel {
+    display: inline-block;
+    vertical-align: top;
+    margin-left: 3em;
+}
+
+#scrollableInstructions {
+    overflow-y: auto;
+    height: 20em;
+    width: 15em;
+    text-align: left;
+    list-style-position: inside;
+}
+
+ol.hide-bullets {
+    list-style-type: none;
+    padding-left: 0;
+    margin-left: 0;
+}
