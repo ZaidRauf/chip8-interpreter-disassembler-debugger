@@ -57,6 +57,7 @@ function read_chip8_file_init(c8){
             breakpointSet.clear();
             
             c8.reset()
+            render_pixel_buffer(c8.pixelBuffer);
             c8.loadProgram(typedArray)
 
             // document.getElementById("startBtn").hidden = true;
@@ -119,6 +120,11 @@ function initExecutionButtons(c8) {
 
     document.getElementById("stepBtn").onclick = function(){
         stepProgram(c8);
+
+        let pcNoOffset = Math.floor((c8.programCounter - chip8.PROGRAM_START)/2);
+        let currentInstr = document.getElementById('instr' + pcNoOffset)
+
+        currentInstr.parentNode.scrollTop = currentInstr.offsetTop - currentInstr.parentNode.offsetTop
     };    
 }
 
@@ -190,6 +196,7 @@ function initSelectDropdown(c8) {
                         breakpointSet.clear();
 
                         c8.reset()
+                        render_pixel_buffer(c8.pixelBuffer);
                         c8.loadProgram(typedArray)
                     
                         document.getElementById("startBtn").disabled = false
@@ -299,7 +306,15 @@ function initRegisterInfo(c8){
             }
 
             currentInstr.style.backgroundColor = 'rgba(0,255,0,0.35)'
-            currentInstr.parentNode.scrollTop = currentInstr.offsetTop - currentInstr.parentNode.offsetTop
+
+            if(running){
+                document.getElementById('instructionList').style.overflowY = 'hidden';
+                currentInstr.parentNode.scrollTop = currentInstr.offsetTop - currentInstr.parentNode.offsetTop
+            }
+            else{
+                document.getElementById('instructionList').style.overflowY = 'auto';
+            }
+
             previousInstr = currentInstr
         }
         catch(e){

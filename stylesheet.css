@@ -12,17 +12,17 @@ body {
 }
 
 button {
-    margin-left: 1em;
+    margin-left: 5.1em;
 }
 
 #romLabel {
     display: inline-block;
-    margin-left: 0.3em;
+    margin-left: 1.2em;
 }
 
 #foregroundColorLabel {
     display: inline-block;
-    margin-left: 1em;
+    margin-left: 5.1em;
 }
 
 #foregroundColorInput {
@@ -37,7 +37,7 @@ button {
 
 #runOnLoadLabel {
     display: inline-block;
-    margin-left: 1em;
+    margin-left: 5.1em;
 }
 
 #debugPanel {
@@ -102,7 +102,7 @@ button {
 
 #instructionList{
     overflow-y: hidden;
-    height: 18em;
+    height: 20em;
 }
 
 ol.hide-bullets {
@@ -118,6 +118,8 @@ ol.hide-bullets {
 
 #mainContent{
     padding-left: 4%;
+    margin: auto;
+    width: auto;
 }
 
 label {
