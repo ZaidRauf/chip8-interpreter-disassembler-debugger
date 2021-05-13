@@ -8,149 +8,158 @@
 </head>
 
 <body>
-    <canvas id="screen"></canvas>
+    <h1 id="title">Chip-8 Interpreter and Debugger</h1>
+    <br>
 
-    <div id="debugPanel">
-        <div id='registers1'>
-            <label>Program Counter: <span id="pcSpan" >---</span></label>
-            <br>
-            <br>
-            <label>Index Register: <span id="iSpan">---</span></label>
-            <br>
-            <br>
-            <label>Delay Timer: <span id="dtSpan">---</span></label>
-            <br>
-            <br>
-            <label>Sound Timer: <span id="stSpan">---</span></label>
-        </div>
-        <div id="stackDiv">
-            <label>Stack:</label>
-            <br>
-            <div id="scrollableStack">
-                <ol class='hide-bullets' start="0">
-                    <li id='stackItem0'>---</li>
-                    <li id='stackItem1'>---</li>
-                    <li id='stackItem2'>---</li>
-                    <li id='stackItem3'>---</li>
-                    <li id='stackItem4'>---</li>
-                    <li id='stackItem5'>---</li>
-                    <li id='stackItem6'>---</li>
-                    <li id='stackItem7'>---</li>
-                    <li id='stackItem8'>---</li>
-                    <li id='stackItem9'>---</li>
-                    <li id='stackItem10'>---</li>
-                    <li id='stackItem11'>---</li>
-                    <li id='stackItem12'>---</li>
-                    <li id='stackItem13'>---</li>
-                    <li id='stackItem14'>---</li>
-                    <li id='stackItem15'>---</li>
-                </ol>
-            </div>
-        </div>
-        <br>
-        <br>
-        <br>
-        <div id='gpRegistersPanel'>
-            <label id='gpRegistersLabel'>General Purpose Registers:</label>
-            <br>
-            <div id='registers2' >
-                <br>
-                <br>
-                <label>V0: <span id="v0Span">---</span></label>
-                <br>
-                <br>
-                <label>V1: <span id="v1Span">---</span></label>     
-                <br>
-                <br>
-                <label>V2: <span id="v2Span">---</span></label>     
-                <br>
-                <br>
-                <label>V3: <span id="v3Span">---</span></label>     
-                <br>
-                <br>
-                <label>V4: <span id="v4Span">---</span></label>
-                <br>
-                <br>
-                <label>V5: <span id="v5Span">---</span></label>
-                <br>
-                <br>
-                <label>V6: <span id="v6Span">---</span></label>     
-                <br>
-                <br>
-                <label>V7: <span id="v7Span">---</span></label>
-            </div>
-            <div id="registers3">
-                <label>V8: <span id="v8Span">---</span></label>     
-                <br>
-                <br>
-                <label>V9: <span id="v9Span">---</span></label>     
-                <br>
-                <br>
-                <label>VA: <span id="vaSpan">---</span></label>     
-                <br>
-                <br>
-                <label>VB: <span id="vbSpan">---</span></label>
-                <br>
-                <br>
-                <label>VC: <span id="vcSpan">---</span></label>
-                <br>
-                <br>
-                <label>VD: <span id="vdSpan">---</span></label>     
-                <br>
-                <br>
-                <label>VE: <span id="veSpan">---</span></label>
-                <br>
-                <br>
-                <label>VF: <span id="vfSpan">---</span></label>
-            </div>
-        </div>
-        <div id="instructionsPanel">
-            <label>Instructions: </label>
-            <div id="scrollableInstructions">
-                <ol class='hide-bullets' id='instructionList'>
-                    <li>0x200: ---</li>
-                    <li>0x202: ---</li>
-                    <li>0x204: ---</li>
-                    <li>0x206: ---</li>
-                    <li>0x208: ---</li>
-                    <li>0x20A: ---</li>
-                    <li>0x20C: ---</li>
-                    <li>0x20E: ---</li>
-                    <li>0x210: ---</li>
-                    <li>0x212: ---</li>
-                    <li>0x214: ---</li>
-                    <li>0x216: ---</li>
-                    <li>0x218: ---</li>
-                    <li>0x21A: ---</li>
-                    <li>0x21C: ---</li>
-                    <li>0x21E: ---</li>
-                </ol>
-            </div>
-        </div>
+    <div id='mainContent'>
+        <canvas id="screen"></canvas>
 
+        <div id="debugPanel">
+            <div id='registers1'>
+                <label>Program Counter: <span id="pcSpan" >---</span></label>
+                <br>
+                <br>
+                <label>Index Register: <span id="iSpan">---</span></label>
+                <br>
+                <br>
+                <label>Delay Timer: <span id="dtSpan">---</span></label>
+                <br>
+                <br>
+                <label>Sound Timer: <span id="stSpan">---</span></label>
+            </div>
+            <div id="stackDiv">
+                <label>Stack:</label>
+                <br>
+                <div id="scrollableStack">
+                    <ol class='hide-bullets' start="0">
+                        <li id='stackItem0'>---</li>
+                        <li id='stackItem1'>---</li>
+                        <li id='stackItem2'>---</li>
+                        <li id='stackItem3'>---</li>
+                        <li id='stackItem4'>---</li>
+                        <li id='stackItem5'>---</li>
+                        <li id='stackItem6'>---</li>
+                        <li id='stackItem7'>---</li>
+                        <li id='stackItem8'>---</li>
+                        <li id='stackItem9'>---</li>
+                        <li id='stackItem10'>---</li>
+                        <li id='stackItem11'>---</li>
+                        <li id='stackItem12'>---</li>
+                        <li id='stackItem13'>---</li>
+                        <li id='stackItem14'>---</li>
+                        <li id='stackItem15'>---</li>
+                    </ol>
+                </div>
+            </div>
+            <br>
+            <br>
+            <br>
+            <div id='gpRegistersPanel'>
+                <label id='gpRegistersLabel'>General Purpose Registers:</label>
+                <br>
+                <div id='registers2' >
+                    <br>
+                    <label>V0: <span id="v0Span">---</span></label>
+                    <br>
+                    <br>
+                    <label>V1: <span id="v1Span">---</span></label>     
+                    <br>
+                    <br>
+                    <label>V2: <span id="v2Span">---</span></label>     
+                    <br>
+                    <br>
+                    <label>V3: <span id="v3Span">---</span></label>     
+                    <br>
+                    <br>
+                    <label>V4: <span id="v4Span">---</span></label>
+                    <br>
+                    <br>
+                    <label>V5: <span id="v5Span">---</span></label>
+                    <br>
+                    <br>
+                    <label>V6: <span id="v6Span">---</span></label>     
+                    <br>
+                    <br>
+                    <label>V7: <span id="v7Span">---</span></label>
+                </div>
+                <div id="registers3">
+                    <label>V8: <span id="v8Span">---</span></label>     
+                    <br>
+                    <br>
+                    <label>V9: <span id="v9Span">---</span></label>     
+                    <br>
+                    <br>
+                    <label>VA: <span id="vaSpan">---</span></label>     
+                    <br>
+                    <br>
+                    <label>VB: <span id="vbSpan">---</span></label>
+                    <br>
+                    <br>
+                    <label>VC: <span id="vcSpan">---</span></label>
+                    <br>
+                    <br>
+                    <label>VD: <span id="vdSpan">---</span></label>     
+                    <br>
+                    <br>
+                    <label>VE: <span id="veSpan">---</span></label>
+                    <br>
+                    <br>
+                    <label>VF: <span id="vfSpan">---</span></label>
+                </div>
+            </div>
+            <div id="instructionsPanel">
+                <label>Instructions: </label>
+                <div id="scrollableInstructions">
+                    <ol class='hide-bullets' id='instructionList'>
+                        <li>0x200: ---</li>
+                        <li>0x202: ---</li>
+                        <li>0x204: ---</li>
+                        <li>0x206: ---</li>
+                        <li>0x208: ---</li>
+                        <li>0x20A: ---</li>
+                        <li>0x20C: ---</li>
+                        <li>0x20E: ---</li>
+                        <li>0x210: ---</li>
+                        <li>0x212: ---</li>
+                        <li>0x214: ---</li>
+                        <li>0x216: ---</li>
+                        <li>0x218: ---</li>
+                        <li>0x21A: ---</li>
+                        <li>0x21C: ---</li>
+                        <li>0x21E: ---</li>
+                    </ol>
+                </div>
+            </div>
+
+        </div>
+        
+        <br>
+        <br>
+
+        <div id="optionsPanel">
+            <label id="romLabel">ROM: </label>
+
+            <select name="roms" id="romSelect">
+                <option value="" disabled selected>Select ROM</option>
+            </select>
+
+            <button disabled type="button" id="startBtn" >Start Execution</button>
+            <button hidden="true" type="button" id="pauseBtn">Pause Execution</button>
+            <button disabled type="button" id="stepBtn" >Step Execution</button>
+
+            <label id="runOnLoadLabel">Run On Load: </label>
+            <input type="checkbox" id="runOnLoadCheckbox" checked="true">
+
+            <label id="foregroundColorLabel">Color: </label>
+            <input type="color" id="foregroundColorInput" value="#FFFFFF">
+
+            <input type="color" id="backgroundColorInput">
+
+            <br>
+            <br>
+            <input hidden="true" type="file" id="input">
+        </div>
     </div>
-    
-    <br>
-    <br>
-
-    <label id="romLabel">ROM: </label>
-    <select name="roms" id="romSelect">
-        <option value="" disabled selected>Select ROM</option>
-    </select>
-
-    <button disabled type="button" id="startBtn" >Start Execution</button>
-    <button hidden="true" type="button" id="pauseBtn">Pause Execution</button>
-
-    <label id="foregroundColorLabel">Foreground Color: </label>
-    <input type="color" id="foregroundColorInput" value="#FFFFFF">
-
-    <label id="backgroundColorLabel">Background Color: </label>
-    <input type="color" id="backgroundColorInput">
-
-    <br>
-    <br>
-    <input hidden="true" type="file" id="input">
-
 </body>
 
 <script src='chip8_disassembler.js' type='text/javascript'></script>

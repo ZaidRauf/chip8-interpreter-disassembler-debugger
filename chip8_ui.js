@@ -3,6 +3,7 @@
 var PIXEL_SIZE = 0
 var foregroundColor = '#FFFFFF'
 var previousInstr = ''
+var runOnLoad = true;
 
 const canvas = document.getElementById('screen')
 const context = canvas.getContext('2d')
@@ -52,14 +53,24 @@ function read_chip8_file_init(c8){
             document.getElementById("startBtn").disabled = false
 
             pauseProgram(c8)
+
+            breakpointSet.clear();
             
             c8.reset()
             c8.loadProgram(typedArray)
 
-            document.getElementById("startBtn").hidden = true;
-            document.getElementById("pauseBtn").hidden = false;
+            // document.getElementById("startBtn").hidden = true;
+            // document.getElementById("pauseBtn").hidden = false;
 
-            runProgram(c8)
+
+            if(runOnLoad){
+                showPlayButton(false);
+                runProgram(c8)
+            }
+
+            else{
+                showPlayButton(true)
+            }
 
         };
     
@@ -68,21 +79,46 @@ function read_chip8_file_init(c8){
 
 }
 
+function showPlayButton(showStart){
+    let startBtn = document.getElementById("startBtn");
+    let pauseBtn = document.getElementById("pauseBtn");
+    let stepBtn = document.getElementById("stepBtn");
+
+    if(showStart){
+        startBtn.hidden = false;
+        pauseBtn.hidden = true;
+        stepBtn.disabled = false
+
+    }
+    
+    else{
+        startBtn.hidden = true;
+        pauseBtn.hidden = false;
+        stepBtn.disabled = true;
+    }
+}
+
 function initExecutionButtons(c8) {
     document.getElementById("pauseBtn").hidden = true;
 
     document.getElementById("startBtn").onclick = function(){
-        document.getElementById("startBtn").hidden = true;
-        document.getElementById("pauseBtn").hidden = false;
+        // document.getElementById("startBtn").hidden = true;
+        // document.getElementById("pauseBtn").hidden = false;
 
-        runProgram(c8);
+        showPlayButton(false);
+        runProgram(c8)
     };
 
     document.getElementById("pauseBtn").onclick = function(){
-        document.getElementById("startBtn").hidden = false;
-        document.getElementById("pauseBtn").hidden = true;
+        // document.getElementById("startBtn").hidden = false;
+        // document.getElementById("pauseBtn").hidden = true;
+        showPlayButton(true);
 
         pauseProgram(c8);
+    };
+
+    document.getElementById("stepBtn").onclick = function(){
+        stepProgram(c8);
     };    
 }
 
@@ -115,9 +151,10 @@ function initSelectDropdown(c8) {
 
             pauseProgram(c8)
 
+            showPlayButton(true);
+
             document.getElementById("startBtn").disabled = true
-            document.getElementById("startBtn").hidden = false;
-            document.getElementById("pauseBtn").hidden = true;
+            document.getElementById("stepBtn").disabled = true
 
         }
 
@@ -150,14 +187,22 @@ function initSelectDropdown(c8) {
 
                         pauseProgram(c8)
 
+                        breakpointSet.clear();
+
                         c8.reset()
                         c8.loadProgram(typedArray)
-                        
-                        document.getElementById("startBtn").hidden = true;
+                    
                         document.getElementById("startBtn").disabled = false
-                        document.getElementById("pauseBtn").hidden = false;
+
+                        if(runOnLoad){
+                            showPlayButton(false);
+                            runProgram(c8)
+                        }
             
-                        runProgram(c8)
+                        else{
+                            showPlayButton(true)
+                        }
+            
                     }
                 ))
             }
@@ -188,20 +233,20 @@ function disassembleAndDisplay(byteArrayProgram){
         listElement.onclick = () => {
 
             if(running || index === Math.floor(((c8.programCounter - chip8.PROGRAM_START))/2)){
-                console.log('Running or Match: ' + index + ' ' + Math.floor(((c8.programCounter - chip8.PROGRAM_START))/2))
+                // console.log('Running or Match: ' + index + ' ' + Math.floor(((c8.programCounter - chip8.PROGRAM_START))/2))
                 return;
             }
 
             else if(!breakpointSet.has(index)){
                 listElement.style.backgroundColor = 'rgba(255,0,0,0.35)'
                 breakpointSet.add(index)
-                console.log('Index Added: ' + index + ' Total: ' + breakpointSet.size)
+                // console.log('Index Added: ' + index + ' Total: ' + breakpointSet.size)
             }
 
             else{
                 listElement.style.backgroundColor = ''
                 breakpointSet.delete(index)
-                console.log('Index Removed: ' + index + ' Total: ' + breakpointSet.size)
+                // console.log('Index Removed: ' + index + ' Total: ' + breakpointSet.size)
             }
 
         }
@@ -211,8 +256,8 @@ function disassembleAndDisplay(byteArrayProgram){
         instructionList.appendChild(listElement)
     })
 
-
-    document.getElementById('instr0').scrollIntoView()    
+    let initialInstruction = document.getElementById('instr0');
+    initialInstruction.parentNode.scrollTop = initialInstruction.offsetTop - initialInstruction.parentNode.offsetTop;
 }
 
 function initRegisterInfo(c8){
@@ -248,13 +293,13 @@ function initRegisterInfo(c8){
         try{
             let pcNoOffset = Math.floor((pcValue - chip8.PROGRAM_START)/2);
             let currentInstr = document.getElementById('instr' + pcNoOffset)
-
+            
             if(previousInstr !== ''){
                 previousInstr.style.backgroundColor = ''
             }
 
             currentInstr.style.backgroundColor = 'rgba(0,255,0,0.35)'
-            currentInstr.scrollIntoView()
+            currentInstr.parentNode.scrollTop = currentInstr.offsetTop - currentInstr.parentNode.offsetTop
             previousInstr = currentInstr
         }
         catch(e){
@@ -262,4 +307,13 @@ function initRegisterInfo(c8){
         }
 
     }, 2)
+}
+
+function initRunOnLoad(){
+    let pauseBox = document.getElementById('runOnLoadCheckbox');
+
+    pauseBox.onchange = () => {
+        // console.log(pauseBox.checked)
+        runOnLoad = pauseBox.checked;
+    }
 }

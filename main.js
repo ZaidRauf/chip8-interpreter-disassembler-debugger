@@ -5,6 +5,7 @@ initExecutionButtons(c8)
 initSelectDropdown(c8)
 initColorPicker(c8)
 initRegisterInfo(c8)
+initRunOnLoad()
 test(c8)
 
 function test (c8){

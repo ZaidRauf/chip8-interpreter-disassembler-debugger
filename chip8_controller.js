@@ -33,10 +33,10 @@ function checkBreakpoint(c8){
   let breakValue = Math.floor(((c8.programCounter - chip8.PROGRAM_START)/2))
 
   if(breakpointSet.has(breakValue)){
-    console.log('MATCH FOUND')
     breakpointSet.delete(breakValue)
     pauseProgram(c8);
     runLock = true;
+    showPlayButton(true)
     return true;
   }
 
@@ -63,7 +63,7 @@ async function stepProgram(c8){
   let breakValue = Math.floor(((c8.programCounter - chip8.PROGRAM_START)/2))
 
   if(breakpointSet.has(breakValue)){
-    console.log('MATCH FOUND STEP')
+    // console.log('MATCH FOUND STEP')
     breakpointSet.delete(breakValue)
   }
 
@@ -80,7 +80,6 @@ async function pauseProgram(c8){
 
 function breakBlockingKeypress(c8){
   simulateArbitraryKeypress();
-  c8.programCounter -= 2;
 }
 
 function simulateArbitraryKeypress(){
