@@ -3,6 +3,7 @@
 var PIXEL_SIZE = 0
 var foregroundColor = '#FFFFFF'
 var previousInstr = ''
+var previous
 var runOnLoad = true;
 
 const canvas = document.getElementById('screen')
@@ -162,6 +163,8 @@ function initSelectDropdown(c8) {
             document.getElementById("startBtn").disabled = true
             document.getElementById("stepBtn").disabled = true
 
+            document.getElementById("ProgramInstructionsParagraph").innerHTML = document.getElementById("CustomInstructions").innerHTML
+
         }
 
         else{
@@ -209,6 +212,8 @@ function initSelectDropdown(c8) {
                         else{
                             showPlayButton(true)
                         }
+
+                        document.getElementById("ProgramInstructionsParagraph").innerHTML = document.getElementById(item + "Instructions").innerHTML
             
                     }
                 ))
@@ -331,4 +336,24 @@ function initRunOnLoad(){
         // console.log(pauseBox.checked)
         runOnLoad = pauseBox.checked;
     }
+}
+
+function initDebuggerInputs(c8){
+    document.addEventListener('keydown', (event)=>{
+        const pressedKey = event.code
+      
+        if(pressedKey === 'KeyU'){
+            runProgram(c8)  
+            showPlayButton(false)
+        }
+
+        if(pressedKey === 'KeyI'){
+            stepProgram(c8)  
+        }
+
+        if(pressedKey === 'KeyO'){
+            pauseProgram(c8)  
+            showPlayButton(true)
+        }
+      }, false)
 }

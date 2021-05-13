@@ -129,3 +129,20 @@ label {
 span {
     font-weight: normal;
 }
+
+#programInstructions {
+    display: inline-block;
+    vertical-align: top;
+}
+
+#keypadInstructions {
+    display: inline-block;
+    vertical-align: top;
+    margin-left: 2%;
+}
+
+#debuggerInstructions {
+    display: inline-block;
+    vertical-align: top;
+    margin-left: 2%;
+}

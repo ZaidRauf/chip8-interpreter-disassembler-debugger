@@ -6,15 +6,4 @@ initSelectDropdown(c8)
 initColorPicker(c8)
 initRegisterInfo(c8)
 initRunOnLoad()
-test(c8)
-
-function test (c8){
-    document.addEventListener('keydown', (event)=>{
-        const pressedKey = event.code
-      
-        if(pressedKey === 'KeyM'){
-            stepProgram(c8)    
-        }
-      
-      }, false)
-}
+initDebuggerInputs(c8)

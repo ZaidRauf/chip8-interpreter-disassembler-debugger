@@ -160,8 +160,91 @@
             <input hidden="true" type="file" id="input">
         </div>
         <br>
-        <h3>Program Instructions:</h3>
-        
+        <div id="programInstructions">
+            <h3>Program Instructions:</h3>
+            <p id="ProgramInstructionsParagraph">
+                No ROM currently loaded!
+            </p>
+            <p hidden="true" id="MazeInstructions">
+                Maze takes no input
+            </p>
+            <p hidden="true" id="PongInstructions">
+                Player 1:  <br>
+                1 -> Move Up  <br>
+                Q -> Move Down <br>
+                <br>
+                Player 2:  <br> 4 -> Move Up <br>
+                R -> Move Down <br>
+            </p>
+            <p hidden="true" id="Connect-4Instructions">
+                Q: Move Left<br>
+                E: Move Right<br>
+                W: Place piece<br>
+            </p>
+            <p hidden="true" id="Tic-Tac-ToeInstructions">
+                Press <br>
+                1 2 3 <br>
+                Q W E <br>
+                A S D <br>
+                <br>
+                to put X/0 in<br>
+                corresponding position<br>
+
+            </p>
+            <p hidden="true" id="TetrisInstructions">
+                W: Move Piece Left<br>
+                E: Move Piece Right<br>
+                Q: Rotate
+            </p>
+            <p hidden="true" id="KeypadTestInstructions">
+                Press any input key<br>
+                and corresponding<br>
+                chip-8 key will<br>
+                light up
+            </p>
+            <p hidden="true" id="SierpinskiInstructions">
+                Takes no input<br>
+                Instructions are<br>
+                misaligned<br>
+            </p>
+            <p hidden="true" id="CustomInstructions">
+                No Info Available
+            </p>
+        </div>
+        <div id="keypadInstructions">
+            <h3>Keyboard to Chip-8 Keypad Mapping:</h3>
+            <p>
+                1 2 3 4 &nbsp;&nbsp;&nbsp; 1 2 3 C <br>
+                Q W E R ==> 4 5 6 D <br>
+                A S D F &nbsp;&nbsp;&nbsp; 7 8 9 E<br>
+                Z X C V &nbsp;&nbsp;&nbsp; A 0 B F
+            </p>
+        </div>
+        <div id="debuggerInstructions">
+            <h3>Debugger Instructions:</h3>
+            <p>
+                <ul>
+                    <li>Choose ROM from dropdown menu</li>
+                    <li>Change the pixel and background colors with the color selection tools</li>
+                    <li>Scroll through stack to see all currently pushed Program Counters</li>
+                    <li>While Running:</li>
+                    <ul>
+                        <li>Pause the current program with the 'Pause Execution' button or by hitting 'O'</li>
+                        <li>Instruction about to be executed is highlighted in green</li>
+                        <li>If a breakpoint is hit while a ROM is executing the program will pause</li>
+                    </ul>
+                    <li>While paused:</li>
+                    <ul>
+                        <li>Step through ROM by pressing the 'Step Execution' Button or 'I' </li>
+                        <li>Continue execution by pressing the 'Start Execution' Button or 'U' </li>
+                        <li>Set breakpoints by clicking an instruction, it will be highlighted red</li>
+                        <li>Remove breakpoints by clicking a red highlighted instruction</li>
+                        <li>Can freely scroll through instruction list</li>
+                    </ul>
+                    <li>Uncheck 'Run On Load' if you don't want ROM execution to begin immediately</li>
+                </ul>
+            </p>
+        </div>
     </div>
 
 </body>
