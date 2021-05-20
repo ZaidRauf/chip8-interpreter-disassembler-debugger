@@ -185,7 +185,7 @@ function initSelectDropdown(c8) {
         select.addEventListener('change', () => {
 
             if(select.value == index){
-                fetch('/roms/' + item + '.c8')
+                fetch(window.location.href + 'roms/' + item + '.c8')
                 .then(response => response.body.getReader().read()
                 .then(
                     function loadRom({done, value}){
