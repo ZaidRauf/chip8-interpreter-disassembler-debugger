@@ -151,9 +151,14 @@ function initSelectDropdown(c8) {
     customInput.hidden = true;
     const select = document.getElementById("romSelect");
 
+    select.addEventListener('keydown', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+    })
+
     select.addEventListener('change', () => {
 
-        if(select.value === 'custom'){
+        if(select.value === 'custom'){          
             customInput.hidden = false;
 
             pauseProgram(c8)
@@ -349,6 +354,11 @@ function initDebuggerInputs(c8){
 
         if(pressedKey === 'KeyI'){
             stepProgram(c8)  
+
+            let pcNoOffset = Math.floor((c8.programCounter - chip8.PROGRAM_START)/2);
+            let currentInstr = document.getElementById('instr' + pcNoOffset)
+
+            currentInstr.parentNode.scrollTop = currentInstr.offsetTop - currentInstr.parentNode.offsetTop    
         }
 
         if(pressedKey === 'KeyO'){
