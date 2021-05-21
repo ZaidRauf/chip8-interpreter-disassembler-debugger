@@ -1,6 +1,8 @@
 # CHIP-8 Interpreter, Disassembler and Debugger
 A JavaScript based CHIP-8 Interpreter, Disassembler and Debugger.
 
+![Demo Image](./img/demo_img1.png)
+
 ## Live Application
 
 **Photosensitivity Warning:** Many CHIP-8 programs exhibit a flickering effect due to the way they are created and how they operate by clearing and redrawing the screen, so please be wary of this if you are an individual who experiences photosensitivity.
@@ -18,7 +20,7 @@ A JavaScript based CHIP-8 Interpreter, Disassembler and Debugger.
 - Dissasembles the currently loaded CHIP-8 program and displays instructions in a human readable format
 
 ## Motivation
-Wanting to learn more about how I could build an emulator in the future, many online sources suggested starting with CHIP-8 interpreter as an initial stepping stone in emulator development which was my main motivation for pursuing this project. I chose to go with JavaScript to learn a bit more about the language as I have not had the oppporuntity to use it during my university classes. As I was building the emulator, I wanted to add some more features other than just being able to run CHIP-8 programs, hence why I added some debugging features such as breakpoints, disassembly, and pausing/stepping through programs. Through this project I gained a deeper understanding of programming for the browser, lower level computer systems, and emulation.
+Wanting to learn more about how I could build an emulator in the future, many online sources suggested starting with CHIP-8 interpreter as an initial stepping stone in emulator development which was my main motivation for pursuing this project. I chose to go with JavaScript, CSS and HTML to learn a bit more about programming for the web. As I was building the emulator, I wanted to add some more features other than just being able to run CHIP-8 programs, hence why I added some debugging features such as breakpoints, disassembly, and pausing/stepping through programs. Through this project I gained a deeper understanding of programming for the browser, lower level computer systems, and emulation.
 
 ## Instructions
 - Choose ROM from dropdown menu
@@ -55,11 +57,11 @@ Wanting to learn more about how I could build an emulator in the future, many on
 - Connect 4 - [David Winter](http://www.pong-story.com/chip8/)
 - Tic-Tac-Toe - [David Winter](http://www.pong-story.com/chip8/)
 - Tetris - [David Winter](http://www.pong-story.com/chip8/)
-- Keypad Test - [Hap](https://github.com/loktar00/chip8/blob/master/roms/Keypad%20Test%20%5BHap%2C%202006%5D.ch8)
-- Sierpinski - [Sergey Naydenov](https://github.com/kripod/chip8-roms/blob/master/demos/Sierpinski%20%5BSergey%20Naydenov%2C%202010%5D.ch8)
+- Keypad Test - [Hap, 2006](https://github.com/loktar00/chip8/blob/master/roms/Keypad%20Test%20%5BHap%2C%202006%5D.ch8)
+- Sierpinski - [Sergey Naydenov, 2010](https://github.com/kripod/chip8-roms/blob/master/demos/Sierpinski%20%5BSergey%20Naydenov%2C%202010%5D.ch8)
 
 ### Referenced Interpreters
-Note: Didn't really look focus on their code, mainly used these implementations to see how mine compared, look for ROMs these emulators used, looked for general technical details surrounding their emulators, and looked for inspiration in the features they implemented. 
+**Note:** Didn't really look focus on their code, mainly used these implementations to see how mine compared, look for ROMs these emulators used, looked for general technical details surrounding their emulators, and looked for inspiration in the features they implemented. 
 - [Chip8.js](https://taniarascia.github.io/chip8/) By Tania Rascia 
 - [CHIP-8 Emulator](https://austinmorlan.com/posts/chip8_emulator/) By Austin Morlan
 - [uni-chip8](https://github.com/eth-p/uni-chip8) By Team CHIPotle
