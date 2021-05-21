@@ -150,12 +150,9 @@ function initSelectDropdown(c8) {
     const customInput = document.getElementById("input")
     customInput.hidden = true;
     const select = document.getElementById("romSelect");
-
-    select.onselect = () => {
-        select.blur()
-    }
-
+    
     select.addEventListener('change', () => {
+        select.blur()
 
         if(select.value === 'custom'){
 
