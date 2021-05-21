@@ -65,7 +65,7 @@ class chip8{
     }
 
     loadFonts(){
-        var digitSprites =
+        let digitSprites =
         [   0xF0, 0x90, 0x90, 0x90, 0xF0,
             0x20, 0x60, 0x20, 0x20, 0x70,
             0xF0, 0x10, 0xF0, 0x80, 0xF0,
@@ -97,7 +97,7 @@ class chip8{
         // Pixel Buffer Init
         this.pixelBuffer = new Array(chip8.PIXEL_BUFFER_HEIGHT);
 
-        for(var x = 0; x < chip8.PIXEL_BUFFER_WIDTH; x++){
+        for(let x = 0; x < chip8.PIXEL_BUFFER_WIDTH; x++){
             this.pixelBuffer[x] = new Array(chip8.PIXEL_BUFFER_WIDTH).fill(0);
         }
             
@@ -137,7 +137,7 @@ class chip8{
         // Pixel Buffer Init
         this.pixelBuffer = new Array(chip8.PIXEL_BUFFER_HEIGHT);
 
-        for(var x = 0; x < chip8.PIXEL_BUFFER_WIDTH; x++){
+        for(let x = 0; x < chip8.PIXEL_BUFFER_WIDTH; x++){
             this.pixelBuffer[x] = new Array(chip8.PIXEL_BUFFER_WIDTH).fill(0);
         }
             
@@ -195,9 +195,9 @@ class chip8{
     SYS(){ return; }
     CLS(){
 
-        for(var x = 0; x < chip8.PIXEL_BUFFER_WIDTH; x++){
+        for(let x = 0; x < chip8.PIXEL_BUFFER_WIDTH; x++){
 
-            for(var y = 0; y < chip8.PIXEL_BUFFER_HEIGHT; y++){
+            for(let y = 0; y < chip8.PIXEL_BUFFER_HEIGHT; y++){
 
                 this.pixelBuffer[x][y] = 0;
 
@@ -209,69 +209,69 @@ class chip8{
     JP(){this.programCounter = chip8.getNNNArgument(this.currentOpcode)} //1nnn
     CALL(){this.stack.push(this.programCounter); this.programCounter = chip8.getNNNArgument(this.currentOpcode); this.stackPointer++} //2nnn
     SE_rb(){
-        var x = chip8.getXArgument(this.currentOpcode)
-        var kk = chip8.getKKArgument(this.currentOpcode)
+        let x = chip8.getXArgument(this.currentOpcode)
+        let kk = chip8.getKKArgument(this.currentOpcode)
         
         if (this.registers[x] === kk){
             this.programCounter += 2
         }
     }
     SNE_rb(){
-        var x = chip8.getXArgument(this.currentOpcode)
-        var kk = chip8.getKKArgument(this.currentOpcode)
+        let x = chip8.getXArgument(this.currentOpcode)
+        let kk = chip8.getKKArgument(this.currentOpcode)
         
         if (this.registers[x] !== kk){
             this.programCounter += 2
         }
     }
     SE_rr(){
-        var x = chip8.getXArgument(this.currentOpcode)
-        var y = chip8.getYArgument(this.currentOpcode)
+        let x = chip8.getXArgument(this.currentOpcode)
+        let y = chip8.getYArgument(this.currentOpcode)
         
         if (this.registers[x] === this.registers[y]){
             this.programCounter += 2
         }
     }
     LD_rb(){
-        var x = chip8.getXArgument(this.currentOpcode)
-        var kk = chip8.getKKArgument(this.currentOpcode)
+        let x = chip8.getXArgument(this.currentOpcode)
+        let kk = chip8.getKKArgument(this.currentOpcode)
         this.registers[x] = kk;
     }
     ADD_rb(){
         // Do i need to set the carry flag? Seems no
-        var x = chip8.getXArgument(this.currentOpcode)
-        var kk = chip8.getKKArgument(this.currentOpcode)
+        let x = chip8.getXArgument(this.currentOpcode)
+        let kk = chip8.getKKArgument(this.currentOpcode)
         this.registers[x] = (this.registers[x] + kk) & 0x00FF;
     }
     LD_rr(){
-        var x = chip8.getXArgument(this.currentOpcode)
-        var y = chip8.getYArgument(this.currentOpcode)
+        let x = chip8.getXArgument(this.currentOpcode)
+        let y = chip8.getYArgument(this.currentOpcode)
 
         this.registers[x] = this.registers[y]
     }
     OR_rr(){
-        var x = chip8.getXArgument(this.currentOpcode)
-        var y = chip8.getYArgument(this.currentOpcode)
+        let x = chip8.getXArgument(this.currentOpcode)
+        let y = chip8.getYArgument(this.currentOpcode)
 
         this.registers[x] = this.registers[x] | this.registers[y]
 
     }
     AND_rr(){
-        var x = chip8.getXArgument(this.currentOpcode)
-        var y = chip8.getYArgument(this.currentOpcode)
+        let x = chip8.getXArgument(this.currentOpcode)
+        let y = chip8.getYArgument(this.currentOpcode)
 
         this.registers[x] = this.registers[x] & this.registers[y]
 
     }
     XOR_rr(){
-        var x = chip8.getXArgument(this.currentOpcode)
-        var y = chip8.getYArgument(this.currentOpcode)
+        let x = chip8.getXArgument(this.currentOpcode)
+        let y = chip8.getYArgument(this.currentOpcode)
 
         this.registers[x] = this.registers[x] ^ this.registers[y]
     }
     ADD_rr(){
-        var x = chip8.getXArgument(this.currentOpcode)
-        var y = chip8.getYArgument(this.currentOpcode)
+        let x = chip8.getXArgument(this.currentOpcode)
+        let y = chip8.getYArgument(this.currentOpcode)
 
         this.registers[x] += this.registers[y]
 
@@ -281,8 +281,8 @@ class chip8{
         this.registers[x] = this.registers[x] & 0xFF
     }
     SUB_rr(){
-        var x = chip8.getXArgument(this.currentOpcode)
-        var y = chip8.getYArgument(this.currentOpcode)
+        let x = chip8.getXArgument(this.currentOpcode)
+        let y = chip8.getYArgument(this.currentOpcode)
 
         if (this.registers[x] > this.registers[y]) this.registers[chip8.FLAG_REGISTER] = 1
         else this.registers[chip8.FLAG_REGISTER] = 0
@@ -291,16 +291,16 @@ class chip8{
         this.registers[x] = this.registers[x] & 0xFF
     }
     SHR_r(){
-        var x = chip8.getXArgument(this.currentOpcode)
-        var y = chip8.getYArgument(this.currentOpcode)
+        let x = chip8.getXArgument(this.currentOpcode)
+        let y = chip8.getYArgument(this.currentOpcode)
 
         this.registers[chip8.FLAG_REGISTER] = this.registers[x] & 0x1
 
         this.registers[x] = (this.registers[x] >>> 1) & 0xFF
     }
     SUBN_rr(){
-        var x = chip8.getXArgument(this.currentOpcode)
-        var y = chip8.getYArgument(this.currentOpcode)
+        let x = chip8.getXArgument(this.currentOpcode)
+        let y = chip8.getYArgument(this.currentOpcode)
 
         if (this.registers[y] > this.registers[x]) this.registers[chip8.FLAG_REGISTER] = 1
         else this.registers[chip8.FLAG_REGISTER] = 0
@@ -309,53 +309,53 @@ class chip8{
         this.registers[x] = this.registers[x] & 0xFF
     }
     SHL_r(){
-        var x = chip8.getXArgument(this.currentOpcode)
-        var y = chip8.getYArgument(this.currentOpcode)
+        let x = chip8.getXArgument(this.currentOpcode)
+        let y = chip8.getYArgument(this.currentOpcode)
 
         this.registers[chip8.FLAG_REGISTER] = (this.registers[x] & 0x80) >>> 7;
 
         this.registers[x] = (this.registers[x] << 1) & 0xFF;
     }
     SNE_rr(){
-        var x = chip8.getXArgument(this.currentOpcode)
-        var y = chip8.getYArgument(this.currentOpcode)
+        let x = chip8.getXArgument(this.currentOpcode)
+        let y = chip8.getYArgument(this.currentOpcode)
         
         if (this.registers[x] !== this.registers[y]){
             this.programCounter += 2;
         }
     }
     LD_ia(){
-        var addr = chip8.getNNNArgument(this.currentOpcode);
+        let addr = chip8.getNNNArgument(this.currentOpcode);
         this.indexRegister = addr;
     }
     JP_ra(){
         this.programCounter = chip8.getNNNArgument(this.currentOpcode) + this.registers[0];
     } //1nnn
     RND_rb(){
-        var x = chip8.getXArgument(this.currentOpcode)
+        let x = chip8.getXArgument(this.currentOpcode)
         this.registers[x] = chip8.randomByteGenerator() & chip8.getKKArgument(this.currentOpcode)
     }
     DRW_rr(){
-        var num_bytes = 0x000F & this.currentOpcode
-        var x_draw_register = chip8.getXArgument(this.currentOpcode)
-        var y_draw_register = (0x00F0 & this.currentOpcode) >>> 4
+        let num_bytes = 0x000F & this.currentOpcode
+        let x_draw_register = chip8.getXArgument(this.currentOpcode)
+        let y_draw_register = (0x00F0 & this.currentOpcode) >>> 4
         this.registers[chip8.FLAG_REGISTER] = 0
 
-        var x_draw_pixel = this.registers[x_draw_register] % chip8.PIXEL_BUFFER_WIDTH
-        var y_draw_pixel = this.registers[y_draw_register] % chip8.PIXEL_BUFFER_HEIGHT
+        let x_draw_pixel = this.registers[x_draw_register] % chip8.PIXEL_BUFFER_WIDTH
+        let y_draw_pixel = this.registers[y_draw_register] % chip8.PIXEL_BUFFER_HEIGHT
 
-        var y_pixel_offset = 0
-        for(var i = 0; i < num_bytes; i++){
-            var display_value = this.memory[this.indexRegister + i]
-            var x_pixel_offset = 0
+        let y_pixel_offset = 0
+        for(let i = 0; i < num_bytes; i++){
+            let display_value = this.memory[this.indexRegister + i]
+            let x_pixel_offset = 0
 
-            var y_pixel_pos = (y_draw_pixel + y_pixel_offset) % chip8.PIXEL_BUFFER_HEIGHT
-            var bit_mask = 0x80
+            let y_pixel_pos = (y_draw_pixel + y_pixel_offset) % chip8.PIXEL_BUFFER_HEIGHT
+            let bit_mask = 0x80
             
-            for(var k = 7; k >= 0; k--){
-                var display_bit = (bit_mask & display_value) >>> k
+            for(let k = 7; k >= 0; k--){
+                let display_bit = (bit_mask & display_value) >>> k
                 
-                var x_pixel_pos = (x_draw_pixel + x_pixel_offset) % chip8.PIXEL_BUFFER_WIDTH
+                let x_pixel_pos = (x_draw_pixel + x_pixel_offset) % chip8.PIXEL_BUFFER_WIDTH
 
                 if(this.pixelBuffer[x_pixel_pos][y_pixel_pos] === 1 && display_bit === 1){
                     this.registers[chip8.FLAG_REGISTER] = 1
@@ -372,8 +372,8 @@ class chip8{
 
     }
     SKP_r(){
-        var x = chip8.getXArgument(this.currentOpcode)
-        var x_key_value = this.registers[x]
+        let x = chip8.getXArgument(this.currentOpcode)
+        let x_key_value = this.registers[x]
 
         if(this.inputKeys[x_key_value]){
             this.programCounter += 2
@@ -381,21 +381,21 @@ class chip8{
 
     }
     SKNP_r(){
-        var x = chip8.getXArgument(this.currentOpcode)
-        var x_key_value = this.registers[x]
+        let x = chip8.getXArgument(this.currentOpcode)
+        let x_key_value = this.registers[x]
 
         if(!this.inputKeys[x_key_value]){
             this.programCounter += 2
         }
     }
     LD_rd(){
-        var x = chip8.getXArgument(this.currentOpcode)
+        let x = chip8.getXArgument(this.currentOpcode)
         this.registers[x] = this.delayTimer
     } // Fx07 - LD Vx, DT
     async LD_rk(){
         this.awaitingBlockingKeypress = true
 
-        var x = chip8.getXArgument(this.currentOpcode)
+        let x = chip8.getXArgument(this.currentOpcode)
         await this.blockingKeyPress(x, this)
 
         this.awaitingBlockingKeypress = false
@@ -406,7 +406,7 @@ class chip8{
             
             document.addEventListener('keydown', blockingKeyListener);
             function blockingKeyListener(e) {
-                var keyValue = c8.keyMap.get(e.code)
+                let keyValue = c8.keyMap.get(e.code)
 
                 if (keyValue !== undefined) {
                     document.removeEventListener('keydown', blockingKeyListener);
@@ -424,7 +424,7 @@ class chip8{
         })
     }
     async LD_dr(){
-        var x = chip8.getXArgument(this.currentOpcode)
+        let x = chip8.getXArgument(this.currentOpcode)
         this.delayTimer = this.registers[x]
 
         while(this.delayTimer != 0){
@@ -434,7 +434,7 @@ class chip8{
         }
     } // Fx15 - LD DT, Vx
     async LD_sr(){
-        var x = chip8.getXArgument(this.currentOpcode)
+        let x = chip8.getXArgument(this.currentOpcode)
         this.soundTimer = this.registers[x]
 
         while(this.soundTimer != 0){
@@ -445,20 +445,20 @@ class chip8{
 
     }
     ADD_ir(){
-        var x = chip8.getXArgument(this.currentOpcode)
+        let x = chip8.getXArgument(this.currentOpcode)
         this.indexRegister = (this.indexRegister + this.registers[x]) & 0xFFFF
     }
     LD_fr(){
-        var x = chip8.getXArgument(this.currentOpcode)
+        let x = chip8.getXArgument(this.currentOpcode)
         this.indexRegister = chip8.DIGIT_START_OFFSET + (this.registers[x] * 0x5)
     }
     LD_br(){
-        var x = chip8.getXArgument(this.currentOpcode)
-        var bcd_val = this.registers[x]
+        let x = chip8.getXArgument(this.currentOpcode)
+        let bcd_val = this.registers[x]
 
-        var least_significant_digit = bcd_val % 10
-        var mid_significant_digit = ((bcd_val % 100) - least_significant_digit) / 10
-        var most_significant_digit = ((bcd_val) - ((bcd_val % 100) - least_significant_digit) - least_significant_digit) / 100
+        let least_significant_digit = bcd_val % 10
+        let mid_significant_digit = ((bcd_val % 100) - least_significant_digit) / 10
+        let most_significant_digit = ((bcd_val) - ((bcd_val % 100) - least_significant_digit) - least_significant_digit) / 100
 
         this.memory[this.indexRegister] = most_significant_digit
         this.memory[this.indexRegister + 1] = mid_significant_digit
@@ -466,14 +466,14 @@ class chip8{
 
     }
     LD_ar(){
-        var x = chip8.getXArgument(this.currentOpcode)
+        let x = chip8.getXArgument(this.currentOpcode)
 
         for(let k = 0; k <= x; k++){
             this.memory[this.indexRegister + k] = this.registers[k]           
         }
     }
     LD_ra(){
-        var x = chip8.getXArgument(this.currentOpcode)
+        let x = chip8.getXArgument(this.currentOpcode)
 
         for(let k = 0; k <= x; k++){
             this.registers[k] = this.memory[this.indexRegister + k]
