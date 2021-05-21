@@ -151,14 +151,15 @@ function initSelectDropdown(c8) {
     customInput.hidden = true;
     const select = document.getElementById("romSelect");
 
-    select.addEventListener('keydown', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-    })
+    select.onclick = () => {
+        select.blur()
+    }
 
     select.addEventListener('change', () => {
+        select.blur()
 
-        if(select.value === 'custom'){          
+        if(select.value === 'custom'){  
+
             customInput.hidden = false;
 
             pauseProgram(c8)

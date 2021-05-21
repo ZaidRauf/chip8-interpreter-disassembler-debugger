@@ -489,7 +489,6 @@ class chip8{
         let upperHalf = this.memory[this.programCounter] << 8
         let lowerHalf = this.memory[this.programCounter + 1]
         let opcode = upperHalf + lowerHalf
-        // console.log(dissasembleInstruction(opcode))
 
         this.currentOpcode = opcode
         return opcode;
