@@ -3,49 +3,65 @@
 class chip8{
 
     static get NUM_REGISTERS() { 
-        return 0x10
+        return 0x10;
     }
 
     static get MEMORY_SIZE() { 
-        return 0x1000
+        return 0x1000;
     }
 
     static get STACK_SIZE() { 
-        return 0x10
+        return 0x10;
     }
 
     static get PIXEL_BUFFER_WIDTH() { 
-        return 64
+        return 64;
     }
 
     static get PIXEL_BUFFER_HEIGHT() { 
-        return 32
+        return 32;
     }
 
     // Can be loaded in anywhere is arbitrary
     static get DIGIT_START_OFFSET() { 
-        return 0x10
+        return 0x10;
     }
 
     static get FLAG_REGISTER() { 
-        return 0xF
+        return 0xF;
     }
 
     static get NUM_KEYS() { 
-        return 0x10
+        return 0x10;
     }
 
     static get PROGRAM_START() { 
-        return 0x200
+        return 0x200;
     }
 
 
     static get TIMER_WAIT_TIME() { 
-        return 16.7
+        return 16.7;
     }
 
     static randomByteGenerator(){
-        return Math.floor(Math.random() * 256)
+        return Math.floor(Math.random() * 256);
+    }
+
+    static getXArgument(opcode){
+        return (0x0F00 & opcode) >>> 8;
+    }
+
+    static getYArgument(opcode){
+        return (0x00F0 & opcode) >>> 4;
+    }
+
+    static getKKArgument(opcode){
+        return 0x00FF & opcode;
+    }
+
+    static getNNNArgument(opcode){
+        return 0x0FFF & opcode;
     }
 
     loadFonts(){
@@ -67,42 +83,42 @@ class chip8{
             0xF0, 0x80, 0xF0, 0x80, 0xF0,
             0xF0, 0x80, 0xF0, 0x80, 0x80 ]
 
-        digitSprites.forEach((element, index) => this.memory[chip8.DIGIT_START_OFFSET + index] = element)
+        digitSprites.forEach((element, index) => this.memory[chip8.DIGIT_START_OFFSET + index] = element);
         
     }
 
     constructor() {
         // Instantiates and initializes registers V0, V1, V2, ... VF
-        this.registers = new Array(chip8.NUM_REGISTERS).fill(0)
+        this.registers = new Array(chip8.NUM_REGISTERS).fill(0);
 
         // Instantiates and initializes memory
-        this.memory = new Array(chip8.MEMORY_SIZE).fill(0)
+        this.memory = new Array(chip8.MEMORY_SIZE).fill(0);
 
         // Pixel Buffer Init
-        this.pixelBuffer = new Array(chip8.PIXEL_BUFFER_HEIGHT)
+        this.pixelBuffer = new Array(chip8.PIXEL_BUFFER_HEIGHT);
 
         for(var x = 0; x < chip8.PIXEL_BUFFER_WIDTH; x++){
-            this.pixelBuffer[x] = new Array(chip8.PIXEL_BUFFER_WIDTH).fill(0)
+            this.pixelBuffer[x] = new Array(chip8.PIXEL_BUFFER_WIDTH).fill(0);
         }
             
 
-        this.stack = []
-        this.indexRegister = 0
-        this.programCounter = 0
-        this.stackPointer = -1 //Is there any need for a stack pointer if im just using .length?
-        this.delayTimer = 0
-        this.soundTimer = 0
-        this.currentOpcode = 0
+        this.stack = [];
+        this.indexRegister = 0;
+        this.programCounter = 0;
+        this.stackPointer = -1; //Is there any need for a stack pointer if im just using .length?
+        this.delayTimer = 0;
+        this.soundTimer = 0;
+        this.currentOpcode = 0;
 
-        this.awaitingBlockingKeypress = false
+        this.awaitingBlockingKeypress = false;
 
         this.inputKeys = Array(chip8.NUM_KEYS).fill(false);
 
-        this.keyArr = ['KeyX', 'Digit1', 'Digit2', 'Digit3', 'KeyQ', 'KeyW', 'KeyE', 'KeyA', 'KeyS', 'KeyD', 'KeyZ', 'KeyC', 'Digit4', 'KeyR', 'KeyF', 'KeyV']
+        this.keyArr = ['KeyX', 'Digit1', 'Digit2', 'Digit3', 'KeyQ', 'KeyW', 'KeyE', 'KeyA', 'KeyS', 'KeyD', 'KeyZ', 'KeyC', 'Digit4', 'KeyR', 'KeyF', 'KeyV'];
         this.keyMap = new Map();
         
         this.keyArr.forEach((value, index) => {
-            this.keyMap.set(value, index)
+            this.keyMap.set(value, index);
         })
 
         this.loadFonts();
@@ -113,28 +129,28 @@ class chip8{
 
     reset(){
         // Instantiates and initializes registers V0, V1, V2, ... VF
-        this.registers = new Array(chip8.NUM_REGISTERS).fill(0)
+        this.registers = new Array(chip8.NUM_REGISTERS).fill(0);
 
         // Instantiates and initializes memory
-        this.memory = new Array(chip8.MEMORY_SIZE).fill(0)
+        this.memory = new Array(chip8.MEMORY_SIZE).fill(0);
 
         // Pixel Buffer Init
-        this.pixelBuffer = new Array(chip8.PIXEL_BUFFER_HEIGHT)
+        this.pixelBuffer = new Array(chip8.PIXEL_BUFFER_HEIGHT);
 
         for(var x = 0; x < chip8.PIXEL_BUFFER_WIDTH; x++){
-            this.pixelBuffer[x] = new Array(chip8.PIXEL_BUFFER_WIDTH).fill(0)
+            this.pixelBuffer[x] = new Array(chip8.PIXEL_BUFFER_WIDTH).fill(0);
         }
             
 
-        this.stack = []
-        this.indexRegister = 0
-        this.programCounter = 0
-        this.stackPointer = -1 //Is there any need for a stack pointer if im just using .length?
-        this.delayTimer = 0
-        this.soundTimer = 0
-        this.currentOpcode = 0
+        this.stack = [];
+        this.indexRegister = 0;
+        this.programCounter = 0;
+        this.stackPointer = -1; //Is there any need for a stack pointer if im just using .length?
+        this.delayTimer = 0;
+        this.soundTimer = 0;
+        this.currentOpcode = 0;
 
-        this.loadFonts()
+        this.loadFonts();
     }
 
     set setCurrentOpcode(newOpcode){
@@ -152,23 +168,23 @@ class chip8{
     inputListener(){
 
         document.addEventListener('keydown', (event)=>{
-            const pressedKey = event.code
+            const pressedKey = event.code;
 
-            let keyValue = this.keyMap.get(pressedKey)
+            let keyValue = this.keyMap.get(pressedKey);
 
             if(keyValue !== undefined){
-                this.pressKey = keyValue
+                this.pressKey = keyValue;
             }
 
         }, false)
 
         document.addEventListener('keyup', (event)=>{
-            const releasedKey = event.code
+            const releasedKey = event.code;
 
-            let keyValue = this.keyMap.get(releasedKey)
+            let keyValue = this.keyMap.get(releasedKey);
 
             if(keyValue !== undefined){
-                this.releaseKey = keyValue
+                this.releaseKey = keyValue;
             }
 
         }, false)
@@ -176,86 +192,86 @@ class chip8{
     }
 
     //Instruction Functions
-    SYS(){ return }
+    SYS(){ return; }
     CLS(){
 
         for(var x = 0; x < chip8.PIXEL_BUFFER_WIDTH; x++){
 
             for(var y = 0; y < chip8.PIXEL_BUFFER_HEIGHT; y++){
 
-                this.pixelBuffer[x][y] = 0
+                this.pixelBuffer[x][y] = 0;
 
             }
             
         }
     } //00E0
     RET(){this.programCounter = this.stack[this.stack.length - 1]; this.stack.pop(); this.stackPointer--} // 00EE
-    JP(){this.programCounter = 0x0FFF & this.currentOpcode} //1nnn
-    CALL(){this.stack.push(this.programCounter); this.programCounter = 0x0FFF & this.currentOpcode; this.stackPointer++} //2nnn
+    JP(){this.programCounter = chip8.getNNNArgument(this.currentOpcode)} //1nnn
+    CALL(){this.stack.push(this.programCounter); this.programCounter = chip8.getNNNArgument(this.currentOpcode); this.stackPointer++} //2nnn
     SE_rb(){
-        var x = (0x0F00 & this.currentOpcode) >>> 8
-        var kk = 0x00FF & this.currentOpcode
+        var x = chip8.getXArgument(this.currentOpcode)
+        var kk = chip8.getKKArgument(this.currentOpcode)
         
         if (this.registers[x] === kk){
             this.programCounter += 2
         }
     }
     SNE_rb(){
-        var x = (0x0F00 & this.currentOpcode) >>> 8
-        var kk = 0x00FF & this.currentOpcode
+        var x = chip8.getXArgument(this.currentOpcode)
+        var kk = chip8.getKKArgument(this.currentOpcode)
         
         if (this.registers[x] !== kk){
             this.programCounter += 2
         }
     }
     SE_rr(){
-        var x = (0x0F00 & this.currentOpcode) >>> 8
-        var y = (0x00F0 & this.currentOpcode) >>> 4
+        var x = chip8.getXArgument(this.currentOpcode)
+        var y = chip8.getYArgument(this.currentOpcode)
         
         if (this.registers[x] === this.registers[y]){
             this.programCounter += 2
         }
     }
     LD_rb(){
-        var x = (0x0F00 & this.currentOpcode) >>> 8
-        var kk = 0x00FF & this.currentOpcode
+        var x = chip8.getXArgument(this.currentOpcode)
+        var kk = chip8.getKKArgument(this.currentOpcode)
         this.registers[x] = kk;
     }
     ADD_rb(){
         // Do i need to set the carry flag? Seems no
-        var x = (0x0F00 & this.currentOpcode) >>> 8
-        var kk = 0x00FF & this.currentOpcode
+        var x = chip8.getXArgument(this.currentOpcode)
+        var kk = chip8.getKKArgument(this.currentOpcode)
         this.registers[x] = (this.registers[x] + kk) & 0x00FF;
     }
     LD_rr(){
-        var x = (0x0F00 & this.currentOpcode) >>> 8
-        var y = (0x00F0 & this.currentOpcode) >>> 4
+        var x = chip8.getXArgument(this.currentOpcode)
+        var y = chip8.getYArgument(this.currentOpcode)
 
         this.registers[x] = this.registers[y]
     }
     OR_rr(){
-        var x = (0x0F00 & this.currentOpcode) >>> 8
-        var y = (0x00F0 & this.currentOpcode) >>> 4
+        var x = chip8.getXArgument(this.currentOpcode)
+        var y = chip8.getYArgument(this.currentOpcode)
 
         this.registers[x] = this.registers[x] | this.registers[y]
 
     }
     AND_rr(){
-        var x = (0x0F00 & this.currentOpcode) >>> 8
-        var y = (0x00F0 & this.currentOpcode) >>> 4
+        var x = chip8.getXArgument(this.currentOpcode)
+        var y = chip8.getYArgument(this.currentOpcode)
 
         this.registers[x] = this.registers[x] & this.registers[y]
 
     }
     XOR_rr(){
-        var x = (0x0F00 & this.currentOpcode) >>> 8
-        var y = (0x00F0 & this.currentOpcode) >>> 4
+        var x = chip8.getXArgument(this.currentOpcode)
+        var y = chip8.getYArgument(this.currentOpcode)
 
         this.registers[x] = this.registers[x] ^ this.registers[y]
     }
     ADD_rr(){
-        var x = (0x0F00 & this.currentOpcode) >>> 8
-        var y = (0x00F0 & this.currentOpcode) >>> 4
+        var x = chip8.getXArgument(this.currentOpcode)
+        var y = chip8.getYArgument(this.currentOpcode)
 
         this.registers[x] += this.registers[y]
 
@@ -265,8 +281,8 @@ class chip8{
         this.registers[x] = this.registers[x] & 0xFF
     }
     SUB_rr(){
-        var x = (0x0F00 & this.currentOpcode) >>> 8
-        var y = (0x00F0 & this.currentOpcode) >>> 4
+        var x = chip8.getXArgument(this.currentOpcode)
+        var y = chip8.getYArgument(this.currentOpcode)
 
         if (this.registers[x] > this.registers[y]) this.registers[chip8.FLAG_REGISTER] = 1
         else this.registers[chip8.FLAG_REGISTER] = 0
@@ -275,16 +291,16 @@ class chip8{
         this.registers[x] = this.registers[x] & 0xFF
     }
     SHR_r(){
-        var x = (0x0F00 & this.currentOpcode) >>> 8
-        var y = (0x00F0 & this.currentOpcode) >>> 4
+        var x = chip8.getXArgument(this.currentOpcode)
+        var y = chip8.getYArgument(this.currentOpcode)
 
         this.registers[chip8.FLAG_REGISTER] = this.registers[x] & 0x1
 
         this.registers[x] = (this.registers[x] >>> 1) & 0xFF
     }
     SUBN_rr(){
-        var x = (0x0F00 & this.currentOpcode) >>> 8
-        var y = (0x00F0 & this.currentOpcode) >>> 4
+        var x = chip8.getXArgument(this.currentOpcode)
+        var y = chip8.getYArgument(this.currentOpcode)
 
         if (this.registers[y] > this.registers[x]) this.registers[chip8.FLAG_REGISTER] = 1
         else this.registers[chip8.FLAG_REGISTER] = 0
@@ -293,35 +309,35 @@ class chip8{
         this.registers[x] = this.registers[x] & 0xFF
     }
     SHL_r(){
-        var x = (0x0F00 & this.currentOpcode) >>> 8
-        var y = (0x00F0 & this.currentOpcode) >>> 4
+        var x = chip8.getXArgument(this.currentOpcode)
+        var y = chip8.getYArgument(this.currentOpcode)
 
-        this.registers[chip8.FLAG_REGISTER] = (this.registers[x] & 0x80) >>> 7 
+        this.registers[chip8.FLAG_REGISTER] = (this.registers[x] & 0x80) >>> 7;
 
-        this.registers[x] = (this.registers[x] << 1) & 0xFF
+        this.registers[x] = (this.registers[x] << 1) & 0xFF;
     }
     SNE_rr(){
-        var x = (0x0F00 & this.currentOpcode) >>> 8
-        var y = (0x00F0 & this.currentOpcode) >>> 4
+        var x = chip8.getXArgument(this.currentOpcode)
+        var y = chip8.getYArgument(this.currentOpcode)
         
         if (this.registers[x] !== this.registers[y]){
-            this.programCounter += 2
+            this.programCounter += 2;
         }
     }
     LD_ia(){
-        var addr = 0x0FFF & this.currentOpcode
+        var addr = chip8.getNNNArgument(this.currentOpcode);
         this.indexRegister = addr;
     }
     JP_ra(){
-        this.programCounter = (0x0FFF & this.currentOpcode) + this.registers[0]
+        this.programCounter = chip8.getNNNArgument(this.currentOpcode) + this.registers[0];
     } //1nnn
     RND_rb(){
-        var x = (0x0F00 & this.currentOpcode) >>> 8
-        this.registers[x] = chip8.randomByteGenerator() & (0x00FF & this.currentOpcode)
+        var x = chip8.getXArgument(this.currentOpcode)
+        this.registers[x] = chip8.randomByteGenerator() & chip8.getKKArgument(this.currentOpcode)
     }
     DRW_rr(){
         var num_bytes = 0x000F & this.currentOpcode
-        var x_draw_register = (0x0F00 & this.currentOpcode) >>> 8
+        var x_draw_register = chip8.getXArgument(this.currentOpcode)
         var y_draw_register = (0x00F0 & this.currentOpcode) >>> 4
         this.registers[chip8.FLAG_REGISTER] = 0
 
@@ -356,7 +372,7 @@ class chip8{
 
     }
     SKP_r(){
-        var x = (0x0F00 & this.currentOpcode) >>> 8
+        var x = chip8.getXArgument(this.currentOpcode)
         var x_key_value = this.registers[x]
 
         if(this.inputKeys[x_key_value]){
@@ -365,7 +381,7 @@ class chip8{
 
     }
     SKNP_r(){
-        var x = (0x0F00 & this.currentOpcode) >>> 8
+        var x = chip8.getXArgument(this.currentOpcode)
         var x_key_value = this.registers[x]
 
         if(!this.inputKeys[x_key_value]){
@@ -373,13 +389,13 @@ class chip8{
         }
     }
     LD_rd(){
-        var x = (0x0F00 & this.currentOpcode) >>> 8
+        var x = chip8.getXArgument(this.currentOpcode)
         this.registers[x] = this.delayTimer
     } // Fx07 - LD Vx, DT
     async LD_rk(){
         this.awaitingBlockingKeypress = true
 
-        var x = (0x0F00 & this.currentOpcode) >>> 8
+        var x = chip8.getXArgument(this.currentOpcode)
         await this.blockingKeyPress(x, this)
 
         this.awaitingBlockingKeypress = false
@@ -408,7 +424,7 @@ class chip8{
         })
     }
     async LD_dr(){
-        var x = (0x0F00 & this.currentOpcode) >>> 8
+        var x = chip8.getXArgument(this.currentOpcode)
         this.delayTimer = this.registers[x]
 
         while(this.delayTimer != 0){
@@ -418,7 +434,7 @@ class chip8{
         }
     } // Fx15 - LD DT, Vx
     async LD_sr(){
-        var x = (0x0F00 & this.currentOpcode) >>> 8
+        var x = chip8.getXArgument(this.currentOpcode)
         this.soundTimer = this.registers[x]
 
         while(this.soundTimer != 0){
@@ -429,15 +445,15 @@ class chip8{
 
     }
     ADD_ir(){
-        var x = (0x0F00 & this.currentOpcode) >>> 8
+        var x = chip8.getXArgument(this.currentOpcode)
         this.indexRegister = (this.indexRegister + this.registers[x]) & 0xFFFF
     }
     LD_fr(){
-        var x = (0x0F00 & this.currentOpcode) >>> 8
+        var x = chip8.getXArgument(this.currentOpcode)
         this.indexRegister = chip8.DIGIT_START_OFFSET + (this.registers[x] * 0x5)
     }
     LD_br(){
-        var x = (0x0F00 & this.currentOpcode) >>> 8
+        var x = chip8.getXArgument(this.currentOpcode)
         var bcd_val = this.registers[x]
 
         var least_significant_digit = bcd_val % 10
@@ -450,14 +466,14 @@ class chip8{
 
     }
     LD_ar(){
-        var x = (0x0F00 & this.currentOpcode) >>> 8
+        var x = chip8.getXArgument(this.currentOpcode)
 
         for(let k = 0; k <= x; k++){
             this.memory[this.indexRegister + k] = this.registers[k]           
         }
     }
     LD_ra(){
-        var x = (0x0F00 & this.currentOpcode) >>> 8
+        var x = chip8.getXArgument(this.currentOpcode)
 
         for(let k = 0; k <= x; k++){
             this.registers[k] = this.memory[this.indexRegister + k]
