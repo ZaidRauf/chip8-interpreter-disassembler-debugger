@@ -61,7 +61,7 @@ Wanting to learn more about how I could build an emulator in the future, many on
 - Sierpinski - [Sergey Naydenov, 2010](https://github.com/kripod/chip8-roms/blob/master/demos/Sierpinski%20%5BSergey%20Naydenov%2C%202010%5D.ch8)
 
 ### Referenced Interpreters
-**Note:** Didn't really look focus on their code, mainly used these implementations to see how mine compared, look for ROMs these emulators used, looked for general technical details surrounding their emulators, and looked for inspiration in the features they implemented. 
+**Note:** Didn't really focus on their code, mainly used these implementations to see how mine compared, look for ROMs these emulators used, looked for general technical details surrounding their emulators, and looked for inspiration in the features they implemented. 
 - [Chip8.js](https://taniarascia.github.io/chip8/) By Tania Rascia 
 - [CHIP-8 Emulator](https://austinmorlan.com/posts/chip8_emulator/) By Austin Morlan
 - [uni-chip8](https://github.com/eth-p/uni-chip8) By Team CHIPotle
