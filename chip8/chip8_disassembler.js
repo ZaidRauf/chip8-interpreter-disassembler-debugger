@@ -101,7 +101,7 @@ function dissasembleInstruction(opcode){
                     return 'SUBN ' + getXArg(opcode) + ', ' + getYArg(opcode);
 
                 case(0xE):
-                     return 'SHR ' + getXArg(opcode)
+                    return 'SHL ' + getXArg(opcode)
 
                 default:
                     return 'UNK'
